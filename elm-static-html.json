@@ -1,0 +1,8 @@
+{
+  "files": {
+    "src/Main.elm": {
+      "output": "build/static/pages/index.html",
+      "viewFunction": "staticView"
+    }
+  }
+}
