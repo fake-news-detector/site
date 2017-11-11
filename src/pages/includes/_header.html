@@ -19,7 +19,7 @@
     <meta name="theme-color" content="#ffffff">
 
     <style>
-      body {
+      .main {
         max-width: 800px;
         padding: 0 10px;
         margin: 0 auto;
@@ -29,12 +29,8 @@
       }
     </style>
   </head>
-  <body>
-    <%
-      // Temporary Fix for https://github.com/eeue56/elm-static-html/issues/10
-      var html = require('../build/static/pages/' + htmlWebpackPlugin.options.page + '.html');
-      var trimmedHtml = html.replace(/[\s\t\n]*</g, '<').replace(/>[\s\t\n]*/g, '>')
-    %>
-    <div id="app"><%= trimmedHtml %></div>
-  </body>
-</html>
+  <body class="main">
+    <header>
+      <h1>Fake News Detector</h1>
+      <a href="more.html">Saiba Mais</a>
+    </header>
