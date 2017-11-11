@@ -4,13 +4,16 @@
   "description": "Site for the Fake News Detector",
   "main": "index.js",
   "scripts": {
-    "start": "DEBUG=true webpack-dev-server --hot",
+    "start": "npm run generate-html && DEBUG=true webpack-dev-server --hot",
     "start:dist": "http-server build",
     "build":
-      "rm -r build; webpack -p --progress && sw-precache --config=sw-precache-config.js",
+      "rm -r ./build; npm run generate-html && webpack -p --progress && sw-precache --config=sw-precache-config.js",
+    "generate-html":
+      "mkdir -p build/static/pages && elm-static-html -c elm-static-html.json",
     "install": "elm package install -y"
   },
   "dependencies": {
+    "elm-static-html": "^1.3.2",
     "http-server": "^0.10.0"
   },
   "devDependencies": {
