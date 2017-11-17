@@ -99,10 +99,13 @@ update msg model =
 view : Model -> Html Msg
 view model =
     Element.layout stylesheet <|
-        column NoStyle
-            []
-            [ flagButtonAndVotes model
-            , explanation model
+        row NoStyle
+            [ center, width (percent 100) ]
+            [ column NoStyle
+                [ maxWidth (px 800) ]
+                [ flagButtonAndVotes model
+                , explanation model
+                ]
             ]
 
 
