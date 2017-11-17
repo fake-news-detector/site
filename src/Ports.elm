@@ -1,7 +1,7 @@
 port module Ports exposing (..)
 
 
-port openFlagPopup : { url : String, title : String } -> Cmd msg
+port openFlagPopup : { url : String } -> Cmd msg
 
 
 port addVote : ({ categoryId : Int } -> msg) -> Sub msg

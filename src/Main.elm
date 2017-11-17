@@ -4,6 +4,8 @@ import Data.Category as Category exposing (Category)
 import Data.Votes as Votes exposing (PeopleVote, RobotVote, VerifiedVote, VotesResponse)
 import Element exposing (..)
 import Element.Attributes exposing (..)
+import Element.Events exposing (onClick)
+import Element.Input
 import Helpers exposing (onClickStopPropagation)
 import Html exposing (Html)
 import List.Extra
@@ -17,7 +19,7 @@ import Stylesheet exposing (..)
 
 
 type alias Model =
-    { url : String, title : String, votes : WebData VotesResponse, language : Language }
+    { url : String, votes : WebData VotesResponse, language : Language }
 
 
 type alias Flags =
@@ -28,6 +30,8 @@ type Msg
     = OpenFlagPopup
     | VotesResponse (WebData VotesResponse)
     | AddVote { categoryId : Int }
+    | ChangeUrl String
+    | Submit
 
 
 main : Program Flags Model Msg
@@ -42,14 +46,11 @@ main =
 
 init : Flags -> ( Model, Cmd Msg )
 init flags =
-    ( { url = "http://www.google.com"
-      , title = ""
+    ( { url = "http://example.com"
       , votes = NotAsked
       , language = Locale.fromCodeArray flags.languages
       }
-    , Votes.getVotes "http://www.google.com" ""
-        |> RemoteData.sendRequest
-        |> Cmd.map VotesResponse
+    , Cmd.none
     )
 
 
@@ -62,10 +63,20 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         OpenFlagPopup ->
-            ( model, openFlagPopup { url = model.url, title = model.title } )
+            ( model, openFlagPopup { url = model.url } )
 
         VotesResponse response ->
             ( { model | votes = response }, Cmd.none )
+
+        ChangeUrl url ->
+            ( { model | url = url }, Cmd.none )
+
+        Submit ->
+            ( { model | votes = Loading }
+            , Votes.getVotes model.url ""
+                |> RemoteData.sendRequest
+                |> Cmd.map VotesResponse
+            )
 
         AddVote { categoryId } ->
             let
@@ -103,10 +114,29 @@ view model =
             [ center, width (percent 100) ]
             [ column NoStyle
                 [ maxWidth (px 800) ]
-                [ flagButtonAndVotes model
+                [ urlToCheck model
                 , explanation model
                 ]
             ]
+
+
+urlToCheck : Model -> Element Classes variation Msg
+urlToCheck model =
+    column NoStyle
+        []
+        [ row NoStyle
+            []
+            [ Element.Input.text NoStyle
+                []
+                { onChange = ChangeUrl
+                , value = model.url
+                , label = Element.Input.hiddenLabel "Url"
+                , options = []
+                }
+            , button NoStyle [ onClick Submit ] (text "Check")
+            ]
+        , flagButtonAndVotes model
+        ]
 
 
 flagButtonAndVotes : Model -> Element Classes variation Msg
@@ -138,8 +168,12 @@ flagButtonAndVotes model =
                     , el VoteCountItem [ padding 6 ] (text <| translate Words.LoadingError)
                     ]
 
+                Loading ->
+                    [ text <| translate Words.Loading
+                    ]
+
                 _ ->
-                    [ flagButton model ]
+                    []
             )
     else
         el General [ padding 5 ] (text <| translate Words.InvalidUrlError ++ model.url)
