@@ -87,10 +87,6 @@ and [Firefox](https://addons.mozilla.org/en-US/firefox/addon/fakenews-detector/)
 that allows you to detect and flag news directly from your Facebook into
 **Legitimate**, **Fake News**, **Click Bait**, **Extremely Biased**, **Satire** or **Not news**.
 
-[<img height="58" src="static/add-to-chrome.png" alt="Add to Chrome" />](https://chrome.google.com/webstore/detail/fake-news-detector/alomdfnfpbaagehmdokilpbjcjhacabk)
-[<img height="58" src="static/add-to-firefox.png" alt="Add to Firefox" />](https://addons.mozilla.org/en-US/firefox/addon/fakenews-detector/)
-
-
 After flagging a newstory, other people that have the extension will be able to see your flagging,
 will pay more attention to it and may also flag. The data is then saved on a database and read by our robot,
 [Robinho](https://github.com/fake-news-detector/robinho).

@@ -87,9 +87,6 @@ y [Firefox](https://addons.mozilla.org/en-US/firefox/addon/fakenews-detector/)
 que le permite detectar y señalar noticias directamente en tu Facebook como
 **Auténtico**, **Fake News**, **Click Bait**, **Extremamente Tendencioso**, **Sátira** o **No es noticia**.
 
-[<img height="58" src="static/add-to-chrome.png" alt="Adicionar ao Chrome" />](https://chrome.google.com/webstore/detail/fake-news-detector/alomdfnfpbaagehmdokilpbjcjhacabk)
-[<img height="58" src="static/add-to-firefox.png" alt="Adicionar ao Firefox" />](https://addons.mozilla.org/en-US/firefox/addon/fakenews-detector/)
-
 Al clasificar una noticia, otras personas que tienen la extensión van a ver su clasificación,
 quedarán más atentas y también podrán clasificar. Esta información se guarda en una base de datos,
 y es leída por nuestro robot, el [Robinho](https://github.com/fake-news-detector/robinho).
