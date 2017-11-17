@@ -24,3 +24,4 @@ type LocaleKey
     | LoadingError
     | TimeoutError
     | NetworkError
+    | Explanation
