@@ -5,7 +5,7 @@ import Data.Votes as Votes exposing (PeopleVote, RobotVote, VerifiedVote, VotesR
 import Element exposing (..)
 import Element.Attributes exposing (..)
 import Element.Events exposing (onClick)
-import Element.Input
+import Element.Input exposing (hiddenLabel, placeholder)
 import Helpers exposing (onClickStopPropagation)
 import Html exposing (Html)
 import List.Extra
@@ -46,7 +46,7 @@ main =
 
 init : Flags -> ( Model, Cmd Msg )
 init flags =
-    ( { url = "http://example.com"
+    ( { url = ""
       , votes = NotAsked
       , language = Locale.fromCodeArray flags.languages
       }
@@ -110,11 +110,30 @@ update msg model =
 view : Model -> Html Msg
 view model =
     Element.layout stylesheet <|
-        row NoStyle
-            [ center, width (percent 100) ]
+        row General
+            [ center, width (percent 100), padding 20 ]
             [ column NoStyle
                 [ maxWidth (px 800) ]
-                [ urlToCheck model
+                [ wrappedRow NoStyle
+                    [ paddingBottom 20, paddingTop 120, spread ]
+                    [ h1 Title [] (text "Fake News Detector")
+                    , row NoStyle
+                        [ spacing 10 ]
+                        [ link "https://chrome.google.com/webstore/detail/fake-news-detector/alomdfnfpbaagehmdokilpbjcjhacabk" <|
+                            image NoStyle
+                                [ height (px 48) ]
+                                { src = "static/add-to-chrome.png"
+                                , caption = "Adicionar ao Chrome"
+                                }
+                        , link "https://addons.mozilla.org/en-US/firefox/addon/fakenews-detector/" <|
+                            image NoStyle
+                                [ height (px 48) ]
+                                { src = "static/add-to-firefox.png"
+                                , caption = "Adicionar ao Firefox"
+                                }
+                        ]
+                    ]
+                , urlToCheck model
                 , explanation model
                 ]
             ]
@@ -123,17 +142,17 @@ view model =
 urlToCheck : Model -> Element Classes variation Msg
 urlToCheck model =
     column NoStyle
-        []
+        [ minHeight (px 200), spacing 10, paddingBottom 20 ]
         [ row NoStyle
             []
-            [ Element.Input.text NoStyle
-                []
+            [ Element.Input.text UrlInput
+                [ padding 10 ]
                 { onChange = ChangeUrl
                 , value = model.url
-                , label = Element.Input.hiddenLabel "Url"
+                , label = placeholder { text = "Cole um link aqui para verificar se é Fake News", label = hiddenLabel "Url" }
                 , options = []
                 }
-            , button NoStyle [ onClick Submit ] (text "Check")
+            , button BlueButton [ onClick Submit, width (percent 20) ] (text "Checar")
             ]
         , flagButtonAndVotes model
         ]
@@ -148,12 +167,12 @@ flagButtonAndVotes model =
         viewVerifiedVote vote =
             viewVote (Category.toEmoji vote.category) "" vote.category (translate Words.Verified)
 
-        isValidUrl =
-            String.startsWith "http"
+        isValidUrl url =
+            String.startsWith "http" url || String.isEmpty url
     in
     if isValidUrl model.url then
         column General
-            [ spacing 5, padding 5, minWidth (px 130) ]
+            [ spacing 5, minWidth (px 130) ]
             (case model.votes of
                 Success votes ->
                     case votes.verified of
@@ -161,11 +180,10 @@ flagButtonAndVotes model =
                             [ viewVerifiedVote vote ]
 
                         Nothing ->
-                            [ flagButton model, viewVotes votes ]
+                            [ viewVotes votes ]
 
                 Failure _ ->
-                    [ flagButton model
-                    , el VoteCountItem [ padding 6 ] (text <| translate Words.LoadingError)
+                    [ el VoteCountItem [ padding 6 ] (text <| translate Words.LoadingError)
                     ]
 
                 Loading ->
@@ -196,21 +214,36 @@ viewVotes votes =
             viewVote (Category.toEmoji vote.category) (toString vote.count) vote.category ""
     in
     column NoStyle
-        [ spacing 5 ]
-        [ case Votes.bestRobotGuess votes.robot of
-            Just bestGuess ->
-                viewRobotVote bestGuess
+        [ spacing 30 ]
+        [ wrappedRow NoStyle
+            [ spacing 20 ]
+            [ case Votes.bestRobotGuess votes.robot of
+                Just bestGuess ->
+                    column NoStyle
+                        [ spacing 5 ]
+                        [ bold "Opinião do Robinho"
+                        , viewRobotVote bestGuess
+                        ]
 
-            Nothing ->
+                Nothing ->
+                    empty
+            , if List.length votes.people > 1 then
+                column NoStyle [ spacing 5 ] ([ bold "Opinião das Pessoas" ] ++ List.map viewPeopleVote votes.people)
+              else
                 empty
-        , column NoStyle [ spacing 5 ] (List.map viewPeopleVote votes.people)
+            , if List.length votes.people == 0 && Votes.bestRobotGuess votes.robot == Nothing then
+                paragraph NoStyle [] [ text "Não parece ter nada de errado com este link, tente outro" ]
+              else
+                empty
+            ]
+        , paragraph NoStyle [] [ text "Ajude a melhorar esse resultado instalando a extensão no seu navegador" ]
         ]
 
 
 viewVote : String -> String -> Category -> String -> Element Classes variation msg
 viewVote icon preText category postText =
     row VoteCountItem
-        [ padding 6, spacing 5, height (px 26) ]
+        [ padding 6, spacing 5, height (px 32) ]
         [ el VoteEmoji [ moveUp 4 ] (text icon)
         , text preText
         , text (Category.toName category)
@@ -218,8 +251,8 @@ viewVote icon preText category postText =
         ]
 
 
-staticView : Model -> Html Msg
-staticView model =
+staticView : Html Msg
+staticView =
     view (Tuple.first <| init { languages = [ "pt" ] })
 
 

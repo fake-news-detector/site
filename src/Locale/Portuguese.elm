@@ -80,15 +80,12 @@ explanation : String
 explanation =
     """
 
-# Humanos e Robôs trabalhando junto contra os Fake News
+## O que é isso?
 
 O Detector de Fake News é uma extensão para o [Chrome](https://chrome.google.com/webstore/detail/fake-news-detector/alomdfnfpbaagehmdokilpbjcjhacabk)
 e [Firefox](https://addons.mozilla.org/en-US/firefox/addon/fakenews-detector/)
 que permite detectar e classificar direto do seu feed do Facebook as notícias
 como **Legítimas**, **Fake News**, **Click Bait**, **Extremamente Tendenciosa**, **Sátira** ou **Não é notícia**.
-
-[<img height="58" src="static/add-to-chrome.png" alt="Adicionar ao Chrome" />](https://chrome.google.com/webstore/detail/fake-news-detector/alomdfnfpbaagehmdokilpbjcjhacabk)
-[<img height="58" src="static/add-to-firefox.png" alt="Adicionar ao Firefox" />](https://addons.mozilla.org/en-US/firefox/addon/fakenews-detector/)
 
 Ao classificar uma notícia, outras pessoas que tem a extensão vão ver a sua sinalização,
 ficarão mais atentas e também poderão sinalizar. Essas informações são guardadas em um

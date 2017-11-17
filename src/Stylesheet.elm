@@ -20,6 +20,7 @@ type Classes
     | CloseButton
     | VoteEmoji
     | ErrorMessage
+    | UrlInput
 
 
 stylesheet : Style.StyleSheet Classes variation
@@ -28,7 +29,8 @@ stylesheet =
         [ style General
             [ -- source: https://www.smashingmagazine.com/2015/11/using-system-ui-fonts-practical-guide/
               Font.typeface (List.map Font.font [ "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "sans-serif" ])
-            , Font.size 12
+            , Font.size 14
+            , Font.lineHeight 1.5
             ]
         , style Button
             [ Color.text (rgb 75 79 86)
@@ -46,9 +48,10 @@ stylesheet =
             , Border.rounded 2
             ]
         , style VoteCountItem
-            [ Color.text white
-            , Color.background (rgba 0 0 0 0.6)
-            , Border.rounded 6
+            [ Font.size 16
+            ]
+        , style VoteEmoji
+            [ Font.size 22
             ]
         , style Overlay
             [ Color.background (rgba 0 0 0 0.2)
@@ -66,7 +69,7 @@ stylesheet =
                 }
             ]
         , style Title
-            [ Font.size 24
+            [ Font.size 34
             ]
         , style CloseButton
             [ Font.size 18
@@ -77,14 +80,15 @@ stylesheet =
                 [ Color.text darkGrey
                 ]
             ]
-        , style VoteEmoji
-            [ Font.size 20
-            ]
         , style ErrorMessage
             [ Color.border (rgb 245 198 203)
             , Color.background (rgb 248 215 218)
             , Color.text (rgb 114 28 36)
             , Border.all 1
             , Border.rounded 3
+            ]
+        , style UrlInput
+            [ Border.all 1
+            , Color.border (rgb 200 200 200)
             ]
         ]

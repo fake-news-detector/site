@@ -80,7 +80,7 @@ explanation : String
 explanation =
     """
 
-# Humans and Robots working together against Fake News
+## What is this?
 
 The Fake News Detector is an extension for [Chrome](https://chrome.google.com/webstore/detail/fake-news-detector/alomdfnfpbaagehmdokilpbjcjhacabk)
 and [Firefox](https://addons.mozilla.org/en-US/firefox/addon/fakenews-detector/)
