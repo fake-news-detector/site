@@ -2,7 +2,15 @@
   "files": {
     "src/Main.elm": {
       "output": "build/static/pages/index.html",
-      "viewFunction": "staticView"
+      "viewFunction": "staticViewPt"
+    },
+    "src//Main.elm": {
+      "output": "build/static/pages/en.html",
+      "viewFunction": "staticViewEn"
+    },
+    "src///Main.elm": {
+      "output": "build/static/pages/es.html",
+      "viewFunction": "staticViewEs"
     }
   }
 }

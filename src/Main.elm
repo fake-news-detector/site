@@ -275,11 +275,26 @@ viewVote model icon preText category postText =
         ]
 
 
-staticView : Html Msg
-staticView =
-    view (Tuple.first <| init { languages = [ "pt" ] })
-
-
 explanation : Model -> Element Classes variation msg
 explanation model =
     html <| Markdown.toHtml [] (Locale.translate model.language Explanation)
+
+
+staticView : String -> Html Msg
+staticView lang =
+    view (Tuple.first <| init { languages = [ lang ] })
+
+
+staticViewPt : Html Msg
+staticViewPt =
+    staticView "pt"
+
+
+staticViewEn : Html Msg
+staticViewEn =
+    staticView "en"
+
+
+staticViewEs : Html Msg
+staticViewEs =
+    staticView "es"
