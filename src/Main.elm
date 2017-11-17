@@ -11,7 +11,7 @@ import Html exposing (Html)
 import List.Extra
 import Locale.Languages exposing (Language)
 import Locale.Locale as Locale exposing (translate)
-import Locale.Words as Words exposing (LocaleKey)
+import Locale.Words exposing (LocaleKey(..))
 import Markdown
 import Ports exposing (..)
 import RemoteData exposing (..)
@@ -79,7 +79,7 @@ update msg model =
 
         Submit ->
             if String.startsWith "http" model.url then
-                ( { model | votes = Loading }
+                ( { model | votes = RemoteData.Loading }
                 , Votes.getVotes model.url ""
                     |> RemoteData.sendRequest
                     |> Cmd.map VotesResponse
@@ -131,20 +131,20 @@ view model =
                 [ maxWidth (px 800) ]
                 [ wrappedRow NoStyle
                     [ paddingBottom 20, paddingTop 120, spread ]
-                    [ h1 Title [] (text "Fake News Detector")
+                    [ h1 Title [] (text <| translate model.language FakeNewsDetector)
                     , row NoStyle
                         [ spacing 10 ]
                         [ link "https://chrome.google.com/webstore/detail/fake-news-detector/alomdfnfpbaagehmdokilpbjcjhacabk" <|
                             image NoStyle
                                 [ height (px 48) ]
                                 { src = "static/add-to-chrome.png"
-                                , caption = "Adicionar ao Chrome"
+                                , caption = translate model.language AddToChrome
                                 }
                         , link "https://addons.mozilla.org/en-US/firefox/addon/fakenews-detector/" <|
                             image NoStyle
                                 [ height (px 48) ]
                                 { src = "static/add-to-firefox.png"
-                                , caption = "Adicionar ao Firefox"
+                                , caption = translate model.language AddToFirefox
                                 }
                         ]
                     ]
@@ -165,10 +165,10 @@ urlToCheck model =
                     [ padding 10 ]
                     { onChange = ChangeUrl
                     , value = model.url
-                    , label = placeholder { text = "Cole um link aqui para verificar se é Fake News", label = hiddenLabel "Url" }
+                    , label = placeholder { text = translate model.language PasteLink, label = hiddenLabel "Url" }
                     , options = [ Element.Input.textKey (toString model.refreshUrlCounter) ]
                     }
-                , button BlueButton [ width (percent 20) ] (text "Checar")
+                , button BlueButton [ width (percent 20) ] (text <| translate model.language Check)
                 ]
             )
         , flagButtonAndVotes model
@@ -182,7 +182,7 @@ flagButtonAndVotes model =
             Locale.translate model.language
 
         viewVerifiedVote vote =
-            viewVote (Category.toEmoji vote.category) "" vote.category (translate Words.Verified)
+            viewVote model (Category.toEmoji vote.category) "" vote.category (translate Verified)
 
         isValidUrl url =
             String.startsWith "http" url || String.isEmpty url
@@ -197,38 +197,41 @@ flagButtonAndVotes model =
                             [ viewVerifiedVote vote ]
 
                         Nothing ->
-                            [ viewVotes votes ]
+                            [ viewVotes model votes ]
 
                 Failure _ ->
-                    [ el VoteCountItem [ padding 6 ] (text <| translate Words.LoadingError)
+                    [ el VoteCountItem [ padding 6 ] (text <| translate LoadingError)
                     ]
 
-                Loading ->
-                    [ text <| translate Words.Loading
+                RemoteData.Loading ->
+                    [ text <| translate Locale.Words.Loading
                     ]
 
                 _ ->
                     []
             )
     else
-        el General [ padding 5 ] (text <| translate Words.InvalidUrlError ++ model.url)
+        el General [ padding 5 ] (text <| translate InvalidUrlError ++ model.url)
 
 
 flagButton : Model -> Element Classes variation Msg
 flagButton model =
     button Button
         [ padding 4, onClickStopPropagation OpenFlagPopup ]
-        (text <| Locale.translate model.language Words.FlagButton)
+        (text <| Locale.translate model.language FlagButton)
 
 
-viewVotes : VotesResponse -> Element Classes variation Msg
-viewVotes votes =
+viewVotes : Model -> VotesResponse -> Element Classes variation Msg
+viewVotes model votes =
     let
         viewRobotVote ( category, chance ) =
-            viewVote "\x1F916" (toString chance ++ "%") category ""
+            viewVote model "\x1F916" (toString chance ++ "%") category ""
 
         viewPeopleVote vote =
-            viewVote (Category.toEmoji vote.category) (toString vote.count) vote.category ""
+            viewVote model (Category.toEmoji vote.category) (toString vote.count) vote.category ""
+
+        translate_ =
+            translate model.language
     in
     column NoStyle
         [ spacing 30 ]
@@ -238,36 +241,36 @@ viewVotes votes =
                 Just bestGuess ->
                     column NoStyle
                         [ spacing 5 ]
-                        [ bold "Opinião do Robinho"
+                        [ bold <| translate_ RobinhosOpinion
                         , viewRobotVote bestGuess
                         ]
 
                 Nothing ->
                     empty
             , if List.length votes.people > 0 then
-                column NoStyle [ spacing 5 ] ([ bold "Opinião das Pessoas" ] ++ List.map viewPeopleVote votes.people)
+                column NoStyle [ spacing 5 ] ([ bold <| translate_ PeoplesOpinion ] ++ List.map viewPeopleVote votes.people)
               else
                 empty
             , if List.length votes.people == 0 && Votes.bestRobotGuess votes.robot == Nothing then
                 paragraph NoStyle
                     []
-                    [ text "Não parece ter nada de errado com este link. Quer um exemplo? "
-                    , el NoStyle [ onClick UseExample ] (link "javascript:" (underline "Clique aqui"))
+                    [ text <| translate_ NothingWrongExample
+                    , el NoStyle [ onClick UseExample ] (link "javascript:" (underline <| translate_ ClickHere))
                     ]
               else
                 empty
             ]
-        , paragraph NoStyle [] [ text "Ajude a melhorar esse resultado instalando a extensão no seu navegador" ]
+        , paragraph NoStyle [] [ text <| translate_ HelpImproveResult ]
         ]
 
 
-viewVote : String -> String -> Category -> String -> Element Classes variation msg
-viewVote icon preText category postText =
+viewVote : Model -> String -> String -> Category -> String -> Element Classes variation msg
+viewVote model icon preText category postText =
     row VoteCountItem
         [ padding 6, spacing 5, height (px 32) ]
         [ el VoteEmoji [ moveUp 4 ] (text icon)
         , text preText
-        , text (Category.toName category)
+        , text <| String.toLower <| translate model.language (Category.toName category)
         , text postText
         ]
 
@@ -279,4 +282,4 @@ staticView =
 
 explanation : Model -> Element Classes variation msg
 explanation model =
-    html <| Markdown.toHtml [] (Locale.translate model.language Words.Explanation)
+    html <| Markdown.toHtml [] (Locale.translate model.language Explanation)

@@ -25,3 +25,13 @@ type LocaleKey
     | TimeoutError
     | NetworkError
     | Explanation
+    | Check
+    | PasteLink
+    | FakeNewsDetector
+    | AddToChrome
+    | AddToFirefox
+    | RobinhosOpinion
+    | PeoplesOpinion
+    | NothingWrongExample
+    | ClickHere
+    | HelpImproveResult

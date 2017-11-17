@@ -75,6 +75,36 @@ translate localeValue =
         Explanation ->
             explanation
 
+        Check ->
+            "verificar"
+
+        PasteLink ->
+            "Pega un enlace aquí para comprobar si es Fake News"
+
+        FakeNewsDetector ->
+            "Detector de Fake News"
+
+        AddToChrome ->
+            "Añadir a Chrome"
+
+        AddToFirefox ->
+            "Añadir a Firefox"
+
+        RobinhosOpinion ->
+            "Opinión de Robinho"
+
+        PeoplesOpinion ->
+            "Opinión de las Personas"
+
+        NothingWrongExample ->
+            "No parece tener nada mal con este enlace. ¿Quiere un ejemplo? "
+
+        ClickHere ->
+            "Haga clic aquí"
+
+        HelpImproveResult ->
+            "Ayude a mejorar este resultado instalando la extensión en su navegador"
+
 
 explanation : String
 explanation =
