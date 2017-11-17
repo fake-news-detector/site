@@ -84,27 +84,27 @@ explanation =
 
 El Fake News Detector es una extensión para [Chrome](https://chrome.google.com/webstore/detail/fake-news-detector/alomdfnfpbaagehmdokilpbjcjhacabk)
 y [Firefox](https://addons.mozilla.org/en-US/firefox/addon/fakenews-detector/)
-que le permite detectar y señalar noticias directamente de tu Facebook en
-**Auténtico**, **Fake News**, **Click Bait**, **Extremamente Tendencioso**, **Sátira** ou **No es noticia**.
+que le permite detectar y señalar noticias directamente en tu Facebook como
+**Auténtico**, **Fake News**, **Click Bait**, **Extremamente Tendencioso**, **Sátira** o **No es noticia**.
 
 [<img height="58" src="static/add-to-chrome.png" alt="Adicionar ao Chrome" />](https://chrome.google.com/webstore/detail/fake-news-detector/alomdfnfpbaagehmdokilpbjcjhacabk)
 [<img height="58" src="static/add-to-firefox.png" alt="Adicionar ao Firefox" />](https://addons.mozilla.org/en-US/firefox/addon/fakenews-detector/)
 
-Al clasificar una noticia, otras personas que tienen la extensión van a ver su señalización,
-quedarán más atentas y también podrán señalar. Esta información se guarda en una base de datos,
+Al clasificar una noticia, otras personas que tienen la extensión van a ver su clasificación,
+quedarán más atentas y también podrán clasificar. Esta información se guarda en una base de datos,
 y es leída por nuestro robot, el [Robinho](https://github.com/fake-news-detector/robinho).
 
-El Robinho se basa en la información dada por nosotros humanos, y va aprendiendo
+El Robinho se basa en la información dada por nosotros, y va aprendiendo
 con el tiempo a clasificar automáticamente una noticia como Fake News, Click Bait,
 etc, por su texto. Con eso, incluso nuevas noticias que nadie nunca vio pueden ser
 rápidamente clasificadas.
 
-La extensión entonces muestra en las noticias de su facebook la evaluación del robot y de las personas:
+La extensión, entonces, muestra en las noticias de su Facebook la evaluación del robot y de las personas:
 
 <img src="static/clickbait.png" width="471" alt="Extensión que muestra que una noticia fue clasificada como clickbait en facebook" />
 
 Cuanto más tu evalúas las noticias, más contribuyes a la construcción de una base para enseñar y
-mejorar el Robinho, que aún está muy al principio de su desarrollo, vea, todavía es un bebé robot:
+mejorar el Robinho, que está aún muy al principio de su desarrollo, todavía es un bebé robot:
 
 <img src="static/robinho.jpg" width="350" alt="Foto de Robinho">
 
@@ -126,10 +126,10 @@ llegando a ganar miles de dólares al mes con anuncios.
 
 La mayoría de estos sitios eran pro-Trump, por qué? ¿El Macedonio era un defensor
 férreo del Trump? ¡No necesariamente! Pero él se dio cuenta de que el electorado
-de Trump era más acertado a creer y propagar Fake News.
+de Trump era más suceptible a creer y propagar Fake News.
 
 Ahora, en 2018, tendremos elecciones en Brasil, y hay muchas páginas por ahí que
-no se preocupan por conferir las fuentes, y pueden aprovecharse (y ya se están aprovechando)
+no se preocupan por entregar las fuentes, y pueden aprovecharse (y ya se están aprovechando)
 de la misma estrategia que benefició a Donald Trump.
 
 Además, todavía tenemos muchas publicaciones extremadamente tendenciosas de todos
@@ -137,28 +137,28 @@ los lados y los irritantes click-baits.
 
 El Detector de Fake News es una pequeña iniciativa para intentar hacer alguna
 diferencia en la lucha contra este problema, uniendo la buena voluntad de las
-personas (Crowdsourcing) con tecnología (Machine Learning)
+personas (Crowdsourcing) con tecnología (Machine Learning).
 
 ## Cómo contribuir
 
-Sólo de bajar la extensión y señalar las noticias usted ya va a estar ayudando mucho, tanto otros
-usuarios, como en el desarrollo de Robinho.
+Sólo bajando la extensión y clasificando las noticias tu ya estarás ayudando mucho, a otras
+personas y en el desarrollo de Robinho.
 
-Pero si usted es desarrollador o data scientist, el Detector de Fake News es un
+Pero si tu eres desarrollador o data scientist, el Detector de Fake News es un
 proyecto de código abierto que necesita mucho de su ayuda! Todos los repositorios
 están disponibles en:
 [https://github.com/fake-news-detector](https://github.com/fake-news-detector).
 
 Las tecnologías también son muy emocionantes: usamos Elm con WebExtensions para
-la extensión, Rust para la API y Python para Machine Learning. ¿No conoce? No
-tiene problema, al final el objetivo del proyecto es justamente aprender esas
+la extensión, Rust para la API y Python para Machine Learning. ¿No conoces? No
+hay problema, al final el objetivo del proyecto es justamente aprender esas
 tecnologías mientras ayuda al mundo.
 
 Si desea ayudar, eche un vistazo a nuestro [ROADMAP](https://github.com/fake-news-detector/site/blob/master/ROADMAP.md)
 (en inglés) para entender la dirección del proyecto, y mire también
 las [issues del github de los proyectos](https://github.com/fake-news-detector).
 
-Si usted se interesó pero tiene dudas de cómo puede ayudar, me busque en el twitter,
+Si usted se interesó pero tiene dudas de cómo puede ayudar, busqueme en twitter,
 [@_rchaves_](https://twitter.com/_rchaves_).
 
 """
