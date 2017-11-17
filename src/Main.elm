@@ -4,7 +4,7 @@ import Data.Category as Category exposing (Category)
 import Data.Votes as Votes exposing (PeopleVote, RobotVote, VerifiedVote, VotesResponse)
 import Element exposing (..)
 import Element.Attributes exposing (..)
-import Element.Events exposing (onClick)
+import Element.Events exposing (..)
 import Element.Input exposing (hiddenLabel, placeholder)
 import Helpers exposing (onClickStopPropagation)
 import Html exposing (Html)
@@ -19,7 +19,11 @@ import Stylesheet exposing (..)
 
 
 type alias Model =
-    { url : String, votes : WebData VotesResponse, language : Language }
+    { url : String
+    , refreshUrlCounter : Int -- hack: http://package.elm-lang.org/packages/mdgriffith/style-elements/4.2.0/Element-Input#textKey
+    , votes : WebData VotesResponse
+    , language : Language
+    }
 
 
 type alias Flags =
@@ -48,6 +52,7 @@ main =
 init : Flags -> ( Model, Cmd Msg )
 init flags =
     ( { url = ""
+      , refreshUrlCounter = 0
       , votes = NotAsked
       , language = Locale.fromCodeArray flags.languages
       }
@@ -111,7 +116,7 @@ update msg model =
             ( { model | votes = Success updatedVotes }, Cmd.none )
 
         UseExample ->
-            model
+            { model | refreshUrlCounter = model.refreshUrlCounter + 1 }
                 |> update (ChangeUrl "http://www.acritica.com/channels/cotidiano/news/droga-que-pode-causar-atitudes-canibais-e-apreendida-no-brasil")
                 |> Tuple.first
                 |> update Submit
@@ -153,17 +158,19 @@ urlToCheck : Model -> Element Classes variation Msg
 urlToCheck model =
     column NoStyle
         [ minHeight (px 200), spacing 10, paddingBottom 20 ]
-        [ row NoStyle
-            []
-            [ Element.Input.text UrlInput
-                [ padding 10 ]
-                { onChange = ChangeUrl
-                , value = model.url
-                , label = placeholder { text = "Cole um link aqui para verificar se é Fake News", label = hiddenLabel "Url" }
-                , options = []
-                }
-            , button BlueButton [ onClick Submit, width (percent 20) ] (text "Checar")
-            ]
+        [ node "form"
+            (row NoStyle
+                [ onSubmit Submit ]
+                [ Element.Input.text UrlInput
+                    [ padding 10 ]
+                    { onChange = ChangeUrl
+                    , value = model.url
+                    , label = placeholder { text = "Cole um link aqui para verificar se é Fake News", label = hiddenLabel "Url" }
+                    , options = [ Element.Input.textKey (toString model.refreshUrlCounter) ]
+                    }
+                , button BlueButton [ width (percent 20) ] (text "Checar")
+                ]
+            )
         , flagButtonAndVotes model
         ]
 
