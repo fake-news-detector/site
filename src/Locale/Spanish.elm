@@ -37,7 +37,7 @@ translate localeValue =
             "Título no explica la noticia completa de propósito sólo para ganar clics"
 
         ExtremelyBiased ->
-            "Extremadamente Tienencioso"
+            "Extremadamente Sesgado"
 
         ExtremelyBiasedDescription ->
             "Sólo muestra un lado de la historia, interpreta de forma exagerada algunos puntos, sin ponderación con otros"
@@ -110,14 +110,14 @@ explanation : String
 explanation =
     """
 
-## Que es esto?
+## ¿Qué es esto?
 
 El Fake News Detector es una extensión para [Chrome](https://chrome.google.com/webstore/detail/fake-news-detector/alomdfnfpbaagehmdokilpbjcjhacabk)
 y [Firefox](https://addons.mozilla.org/en-US/firefox/addon/fakenews-detector/)
-que le permite detectar y señalar noticias directamente en tu Facebook como
-**Auténtico**, **Fake News**, **Click Bait**, **Extremamente Tendencioso**, **Sátira** o **No es noticia**.
+que te permite detectar y señalar noticias directamente en tu Facebook como
+**Auténtico**, **Fake News**, **Click Bait**, **Extremadamente Sesgado**, **Sátira** o **No es noticia**.
 
-Al clasificar una noticia, otras personas que tienen la extensión van a ver su clasificación,
+Al clasificar una noticia, otras personas que tienen la extensión van a ver tu clasificación,
 quedarán más atentas y también podrán clasificar. Esta información se guarda en una base de datos,
 y es leída por nuestro robot, el [Robinho](https://github.com/fake-news-detector/robinho).
 
@@ -126,12 +126,12 @@ con el tiempo a clasificar automáticamente una noticia como Fake News, Click Ba
 etc, por su texto. Con eso, incluso nuevas noticias que nadie nunca vio pueden ser
 rápidamente clasificadas.
 
-La extensión, entonces, muestra en las noticias de su Facebook la evaluación del robot y de las personas:
+La extensión, entonces, muestra en las noticias de tu Facebook la evaluación del robot y de las personas:
 
 <img src="static/clickbait.png" width="471" alt="Extensión que muestra que una noticia fue clasificada como clickbait en facebook" />
 
-Cuanto más tu evalúas las noticias, más contribuyes a la construcción de una base para enseñar y
-mejorar el Robinho, que está aún muy al principio de su desarrollo, todavía es un bebé robot:
+Cuanto más evalúas las noticias, más contribuyes a la construcción de una base para enseñar y
+mejorar el Robinho, cuyo desarrollo recién está empezando, todavía es un bebé robot:
 
 <img src="static/robinho.jpg" width="350" alt="Foto de Robinho">
 
@@ -140,7 +140,7 @@ mejorar el Robinho, que está aún muy al principio de su desarrollo, todavía e
 
 ## Motivación
 
-En 2016, durante la elección de Estados Unidos, muchos sitios de fake news fueron
+En 2016, durante la elección de Estados Unidos, muchos sitios de Fake News fueron
 creados, y propagados a través de las redes sociales, principalmente de Facebook.
 Fueron tantos, que las Fake News tuvieron
 <a target="_blank" href="http://www.patheos.com/blogs/accordingtomatthew/2016/12/fake-news-stories-received-more-clicks-than-real-news-during-end-of-2016-election-season/">
@@ -151,15 +151,15 @@ Uno de los casos más icónicos fue el de un habitante de Macedonia que tenía
 <a target="_blank" href="https://www.wired.com/2017/02/veles-macedonia-fake-news/">más de 100 sitios de fake news registrados</a>,
 llegando a ganar miles de dólares al mes con anuncios.
 
-La mayoría de estos sitios eran pro-Trump, por qué? ¿El Macedonio era un defensor
-férreo del Trump? ¡No necesariamente! Pero él se dio cuenta de que el electorado
-de Trump era más suceptible a creer y propagar Fake News.
+La mayoría de estos sitios eran pro-Trump, ¿por qué? ¿El Macedonio era un defensor
+férreo de Trump? ¡No necesariamente! Pero él se dio cuenta de que el electorado
+de Trump era más susceptible a creer y propagar Fake News.
 
 Ahora, en 2018, tendremos elecciones en Brasil, y hay muchas páginas por ahí que
 no se preocupan por entregar las fuentes, y pueden aprovecharse (y ya se están aprovechando)
 de la misma estrategia que benefició a Donald Trump.
 
-Además, todavía tenemos muchas publicaciones extremadamente tendenciosas de todos
+Además, todavía tenemos muchas publicaciones extremadamente sesgadas de todos
 los lados y los irritantes click-baits.
 
 El Detector de Fake News es una pequeña iniciativa para intentar hacer alguna
@@ -172,7 +172,7 @@ Sólo bajando la extensión y clasificando las noticias tu ya estarás ayudando 
 personas y en el desarrollo de Robinho.
 
 Pero si tu eres desarrollador o data scientist, el Detector de Fake News es un
-proyecto de código abierto que necesita mucho de su ayuda! Todos los repositorios
+proyecto de código abierto que necesita mucho de tu ayuda! Todos los repositorios
 están disponibles en:
 [https://github.com/fake-news-detector](https://github.com/fake-news-detector).
 
@@ -181,11 +181,11 @@ la extensión, Rust para la API y Python para Machine Learning. ¿No conoces? No
 hay problema, al final el objetivo del proyecto es justamente aprender esas
 tecnologías mientras ayuda al mundo.
 
-Si desea ayudar, eche un vistazo a nuestro [ROADMAP](https://github.com/fake-news-detector/site/blob/master/ROADMAP.md)
-(en inglés) para entender la dirección del proyecto, y mire también
+Si desea ayudar, echa un vistazo a nuestro [ROADMAP](https://github.com/fake-news-detector/site/blob/master/ROADMAP.md)
+(en inglés) para entender la dirección del proyecto, y mira también
 las [issues del github de los proyectos](https://github.com/fake-news-detector).
 
-Si usted se interesó pero tiene dudas de cómo puede ayudar, busqueme en twitter,
+Si tú te interesaste pero tienes dudas de cómo puede ayudar, búscame en twitter,
 [@_rchaves_](https://twitter.com/_rchaves_).
 
 """
