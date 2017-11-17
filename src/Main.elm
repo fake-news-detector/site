@@ -32,6 +32,7 @@ type Msg
     | AddVote { categoryId : Int }
     | ChangeUrl String
     | Submit
+    | UseExample
 
 
 main : Program Flags Model Msg
@@ -72,11 +73,14 @@ update msg model =
             ( { model | url = url }, Cmd.none )
 
         Submit ->
-            ( { model | votes = Loading }
-            , Votes.getVotes model.url ""
-                |> RemoteData.sendRequest
-                |> Cmd.map VotesResponse
-            )
+            if String.startsWith "http" model.url then
+                ( { model | votes = Loading }
+                , Votes.getVotes model.url ""
+                    |> RemoteData.sendRequest
+                    |> Cmd.map VotesResponse
+                )
+            else
+                ( model, Cmd.none )
 
         AddVote { categoryId } ->
             let
@@ -105,6 +109,12 @@ update msg model =
                         |> RemoteData.withDefault { verified = Nothing, robot = [], people = peopleVotes }
             in
             ( { model | votes = Success updatedVotes }, Cmd.none )
+
+        UseExample ->
+            model
+                |> update (ChangeUrl "http://www.acritica.com/channels/cotidiano/news/droga-que-pode-causar-atitudes-canibais-e-apreendida-no-brasil")
+                |> Tuple.first
+                |> update Submit
 
 
 view : Model -> Html Msg
@@ -227,12 +237,16 @@ viewVotes votes =
 
                 Nothing ->
                     empty
-            , if List.length votes.people > 1 then
+            , if List.length votes.people > 0 then
                 column NoStyle [ spacing 5 ] ([ bold "Opinião das Pessoas" ] ++ List.map viewPeopleVote votes.people)
               else
                 empty
             , if List.length votes.people == 0 && Votes.bestRobotGuess votes.robot == Nothing then
-                paragraph NoStyle [] [ text "Não parece ter nada de errado com este link, tente outro" ]
+                paragraph NoStyle
+                    []
+                    [ text "Não parece ter nada de errado com este link. Quer um exemplo? "
+                    , el NoStyle [ onClick UseExample ] (link "javascript:" (underline "Clique aqui"))
+                    ]
               else
                 empty
             ]
