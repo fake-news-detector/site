@@ -36,6 +36,16 @@ const config = {
       }
     ]
   },
+  devServer: {
+    historyApiFallback: {
+      index: "index.html",
+      rewrites: [
+        { from: /\/en/, to: "/en.html" },
+        { from: /\/es/, to: "/es.html" },
+        { from: /\/pt/, to: "/pt.html" }
+      ]
+    }
+  },
   plugins: pagesPlugins.concat([
     new webpack.EnvironmentPlugin(["DEBUG"]),
     new CopyWebpackPlugin([

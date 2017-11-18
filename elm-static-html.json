@@ -11,6 +11,10 @@
     "src///Main.elm": {
       "output": "build/static/pages/es.html",
       "viewFunction": "staticViewEs"
+    },
+    "src////Main.elm": {
+      "output": "build/static/pages/pt.html",
+      "viewFunction": "staticViewPt"
     }
   }
 }
