@@ -19,3 +19,9 @@ jobs:
           paths:
             - node_modules
             - elm-stuff
+      - deploy:
+          name: deploy
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "master" ]; then
+              npm run deploy
+            fi
