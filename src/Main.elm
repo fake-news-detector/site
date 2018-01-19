@@ -1,11 +1,11 @@
 module Main exposing (..)
 
+import AutoExpand
 import Data.Category as Category exposing (Category)
 import Data.Votes as Votes exposing (PeopleVote, RobotVote, VerifiedVote, VotesResponse)
 import Element exposing (..)
 import Element.Attributes exposing (..)
 import Element.Events exposing (..)
-import Element.Input exposing (hiddenLabel, placeholder)
 import FlagLink
 import Html exposing (Html)
 import List.Extra
@@ -21,6 +21,7 @@ import Stylesheet exposing (..)
 type alias Model =
     { uuid : String
     , url : String
+    , autoexpand : AutoExpand.State
     , refreshUrlCounter : Int -- hack: http://package.elm-lang.org/packages/mdgriffith/style-elements/4.2.0/Element-Input#textKey
     , votes : WebData VotesResponse
     , language : Language
@@ -35,7 +36,7 @@ type alias Flags =
 type Msg
     = VotesResponse (WebData VotesResponse)
     | AddVote { categoryId : Int }
-    | ChangeUrl String
+    | UpdateInput { textValue : String, state : AutoExpand.State }
     | Submit
     | UseExample
     | MsgForFlagLink FlagLink.Msg
@@ -53,11 +54,16 @@ main =
 
 init : Flags -> ( Model, Cmd Msg )
 init flags =
+    let
+        language =
+            Locale.fromCodeArray flags.languages
+    in
     ( { uuid = flags.uuid
       , url = ""
+      , autoexpand = AutoExpand.initState (autoExpandConfig language)
       , refreshUrlCounter = 0
       , votes = NotAsked
-      , language = Locale.fromCodeArray flags.languages
+      , language = language
       , flagLink = FlagLink.init
       }
     , Cmd.none
@@ -70,8 +76,16 @@ update msg model =
         VotesResponse response ->
             ( { model | votes = response, flagLink = FlagLink.init }, Cmd.none )
 
-        ChangeUrl url ->
-            ( { model | url = url }, Cmd.none )
+        UpdateInput { state, textValue } ->
+            if String.isEmpty textValue then
+                ( { model
+                    | autoexpand = AutoExpand.initState (autoExpandConfig model.language)
+                    , url = textValue
+                  }
+                , Cmd.none
+                )
+            else
+                ( { model | autoexpand = state, url = textValue }, Cmd.none )
 
         Submit ->
             if String.startsWith "http" model.url then
@@ -113,7 +127,13 @@ update msg model =
 
         UseExample ->
             { model | refreshUrlCounter = model.refreshUrlCounter + 1 }
-                |> update (ChangeUrl "http://www.acritica.com/channels/cotidiano/news/droga-que-pode-causar-atitudes-canibais-e-apreendida-no-brasil")
+                |> update
+                    (UpdateInput
+                        { textValue =
+                            "http://www.acritica.com/channels/cotidiano/news/droga-que-pode-causar-atitudes-canibais-e-apreendida-no-brasil"
+                        , state = AutoExpand.initState (autoExpandConfig model.language)
+                        }
+                    )
                 |> Tuple.first
                 |> update Submit
 
@@ -162,18 +182,32 @@ urlToCheck model =
         [ node "form"
             (row NoStyle
                 [ onSubmit Submit ]
-                [ Element.Input.text UrlInput
-                    [ padding 10 ]
-                    { onChange = ChangeUrl
-                    , value = model.url
-                    , label = placeholder { text = translate model.language PasteLink, label = hiddenLabel "Url" }
-                    , options = [ Element.Input.textKey (toString model.refreshUrlCounter) ]
-                    }
+                [ row NoStyle
+                    [ width fill ]
+                    [ html <| AutoExpand.view (autoExpandConfig model.language) model.autoexpand model.url ]
                 , button BlueButton [ width (percent 20) ] (text <| translate model.language Check)
                 ]
             )
         , flagButtonAndVotes model
         ]
+
+
+autoExpandConfig : Language -> AutoExpand.Config Msg
+autoExpandConfig language =
+    AutoExpand.config
+        { onInput = UpdateInput
+        , padding = 12
+        , lineHeight = 21
+        , minRows = 1
+        , maxRows = 4
+        }
+        |> AutoExpand.withPlaceholder (translate language PasteLink)
+        |> AutoExpand.withStyles
+            [ ( "width", "100%" )
+            , ( "resize", "none" )
+            , ( "border-color", "rgba(200,200,200,1)" )
+            , ( "font-size", "100%" )
+            ]
 
 
 flagButtonAndVotes : Model -> Element Classes variation Msg
@@ -212,7 +246,7 @@ flagButtonAndVotes model =
                     []
             )
     else
-        el General [ padding 5 ] (text <| translate InvalidUrlError ++ model.url)
+        paragraph NoStyle [] [ el General [ padding 5 ] (text <| translate InvalidUrlError ++ model.url) ]
 
 
 viewVotes : Model -> VotesResponse -> Element Classes variation Msg

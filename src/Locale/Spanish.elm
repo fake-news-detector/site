@@ -79,7 +79,7 @@ translate localeValue =
             "verificar"
 
         PasteLink ->
-            "Pega un enlace aquí para comprobar si es Fake News"
+            "Pega un link o texto sospechoso aquí"
 
         FakeNewsDetector ->
             "Detector de Fake News"
