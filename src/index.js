@@ -1,7 +1,11 @@
-var App = require("./Main.elm");
+import App from "./Main.elm";
+import uuidv4 from "uuid/v4";
 
 var path = window.location.pathname;
 var browerLanguages = navigator.languages || ["en"];
+
+const uuid = localStorage.getItem("uuid") || uuidv4();
+localStorage.setItem("uuid", uuid);
 
 // TODO: move this language logic to Elm
 var languages = browerLanguages
@@ -23,7 +27,7 @@ if (path === "/") {
 var rootNode = document.getElementById("app");
 rootNode.innerHTML = "";
 
-App.Main.embed(rootNode, { languages: [language] });
+App.Main.embed(rootNode, { languages: [language], uuid });
 
 if (!process.env.DEBUG && "serviceWorker" in navigator) {
   navigator.serviceWorker.register("/service-worker.js");

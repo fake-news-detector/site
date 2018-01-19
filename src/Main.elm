@@ -7,7 +7,6 @@ import Element.Attributes exposing (..)
 import Element.Events exposing (..)
 import Element.Input exposing (hiddenLabel, placeholder)
 import FlagLink
-import Helpers exposing (onClickStopPropagation)
 import Html exposing (Html)
 import List.Extra
 import Locale.Languages exposing (Language)
@@ -20,7 +19,8 @@ import Stylesheet exposing (..)
 
 
 type alias Model =
-    { url : String
+    { uuid : String
+    , url : String
     , refreshUrlCounter : Int -- hack: http://package.elm-lang.org/packages/mdgriffith/style-elements/4.2.0/Element-Input#textKey
     , votes : WebData VotesResponse
     , language : Language
@@ -29,7 +29,7 @@ type alias Model =
 
 
 type alias Flags =
-    { languages : List String }
+    { languages : List String, uuid : String }
 
 
 type Msg
@@ -53,7 +53,8 @@ main =
 
 init : Flags -> ( Model, Cmd Msg )
 init flags =
-    ( { url = ""
+    ( { uuid = flags.uuid
+      , url = ""
       , refreshUrlCounter = 0
       , votes = NotAsked
       , language = Locale.fromCodeArray flags.languages
@@ -67,7 +68,7 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         VotesResponse response ->
-            ( { model | votes = response }, Cmd.none )
+            ( { model | votes = response, flagLink = FlagLink.init }, Cmd.none )
 
         ChangeUrl url ->
             ( { model | url = url }, Cmd.none )
@@ -253,7 +254,7 @@ viewVotes model votes =
               else
                 empty
             ]
-        , Element.map MsgForFlagLink (FlagLink.flagLink "123" model.url model.language model.flagLink)
+        , Element.map MsgForFlagLink (FlagLink.flagLink model.uuid model.url model.language model.flagLink)
         ]
 
 
@@ -275,7 +276,7 @@ explanation model =
 
 staticView : String -> Html Msg
 staticView lang =
-    view (Tuple.first <| init { languages = [ lang ] })
+    view (Tuple.first <| init { languages = [ lang ], uuid = "" })
 
 
 staticViewPt : Html Msg
