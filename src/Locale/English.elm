@@ -186,4 +186,7 @@ to understand where the project is going, also check out the
 If you are interested but have questions about how you can help, send me a tweet,
 [@_rchaves_](https://twitter.com/_rchaves_).
 
+And follow our profile on twitter for news about Fake News and updates about the project:
+[@fndetector](https://twitter.com/fndetector).
+
 """
