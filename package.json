@@ -6,7 +6,7 @@
   "scripts": {
     "start": "npm run generate-html && DEBUG=true webpack-dev-server --hot",
     "start:dist": "http-server build",
-    "build": "rm -r ./build; npm run generate-html && webpack -p --progress && sw-precache --config=sw-precache-config.js",
+    "build": "rm -r ./build; npm run generate-html && NODE_ENV=production webpack --progress && sw-precache --config=sw-precache-config.js",
     "generate-html": "mkdir -p build/static/pages && elm-static-html -c elm-static-html.json",
     "install": "elm package install -y",
     "deploy": "./deploy.sh"
@@ -24,6 +24,7 @@
     "html-webpack-plugin": "^2.30.1",
     "raw-loader": "^0.5.1",
     "sw-precache": "^5.2.0",
+    "uglifyjs-webpack-plugin": "^1.1.6",
     "webpack": "^3.8.1",
     "webpack-dev-server": "^2.9.4"
   },
