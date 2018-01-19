@@ -35,3 +35,4 @@ type LocaleKey
     | NothingWrongExample
     | ClickHere
     | HelpImproveResult
+    | ContentFlagged

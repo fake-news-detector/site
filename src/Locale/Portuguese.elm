@@ -103,7 +103,10 @@ translate localeValue =
             "Clique aqui"
 
         HelpImproveResult ->
-            "Ajude a melhorar esse resultado instalando a extensão no seu navegador"
+            "Acredita que este resultado está errado?"
+
+        ContentFlagged ->
+            "Conteúdo sinalizado, obrigado!"
 
 
 explanation : String

@@ -26,7 +26,8 @@ type Classes
 stylesheet : Style.StyleSheet Classes variation
 stylesheet =
     styleSheet
-        [ style General
+        [ style NoStyle []
+        , style General
             [ -- source: https://www.smashingmagazine.com/2015/11/using-system-ui-fonts-practical-guide/
               Font.typeface (List.map Font.font [ "-apple-system", "BlinkMacSystemFont", "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "sans-serif" ])
             , Font.size 14

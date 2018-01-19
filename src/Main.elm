@@ -6,6 +6,7 @@ import Element exposing (..)
 import Element.Attributes exposing (..)
 import Element.Events exposing (..)
 import Element.Input exposing (hiddenLabel, placeholder)
+import FlagLink
 import Helpers exposing (onClickStopPropagation)
 import Html exposing (Html)
 import List.Extra
@@ -13,8 +14,8 @@ import Locale.Languages exposing (Language)
 import Locale.Locale as Locale exposing (translate)
 import Locale.Words exposing (LocaleKey(..))
 import Markdown
-import Ports exposing (..)
 import RemoteData exposing (..)
+import Return
 import Stylesheet exposing (..)
 
 
@@ -23,6 +24,7 @@ type alias Model =
     , refreshUrlCounter : Int -- hack: http://package.elm-lang.org/packages/mdgriffith/style-elements/4.2.0/Element-Input#textKey
     , votes : WebData VotesResponse
     , language : Language
+    , flagLink : FlagLink.Model
     }
 
 
@@ -31,12 +33,12 @@ type alias Flags =
 
 
 type Msg
-    = OpenFlagPopup
-    | VotesResponse (WebData VotesResponse)
+    = VotesResponse (WebData VotesResponse)
     | AddVote { categoryId : Int }
     | ChangeUrl String
     | Submit
     | UseExample
+    | MsgForFlagLink FlagLink.Msg
 
 
 main : Program Flags Model Msg
@@ -45,7 +47,7 @@ main =
         { init = init
         , view = view
         , update = update
-        , subscriptions = subscriptions
+        , subscriptions = always Sub.none
         }
 
 
@@ -55,22 +57,15 @@ init flags =
       , refreshUrlCounter = 0
       , votes = NotAsked
       , language = Locale.fromCodeArray flags.languages
+      , flagLink = FlagLink.init
       }
     , Cmd.none
     )
 
 
-subscriptions : Model -> Sub Msg
-subscriptions model =
-    addVote AddVote
-
-
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        OpenFlagPopup ->
-            ( model, openFlagPopup { url = model.url } )
-
         VotesResponse response ->
             ( { model | votes = response }, Cmd.none )
 
@@ -120,6 +115,11 @@ update msg model =
                 |> update (ChangeUrl "http://www.acritica.com/channels/cotidiano/news/droga-que-pode-causar-atitudes-canibais-e-apreendida-no-brasil")
                 |> Tuple.first
                 |> update Submit
+
+        MsgForFlagLink msg ->
+            FlagLink.update msg model.flagLink
+                |> Return.map (\flagLink -> { model | flagLink = flagLink })
+                |> Return.mapCmd MsgForFlagLink
 
 
 view : Model -> Html Msg
@@ -214,13 +214,6 @@ flagButtonAndVotes model =
         el General [ padding 5 ] (text <| translate InvalidUrlError ++ model.url)
 
 
-flagButton : Model -> Element Classes variation Msg
-flagButton model =
-    button Button
-        [ padding 4, onClickStopPropagation OpenFlagPopup ]
-        (text <| Locale.translate model.language FlagButton)
-
-
 viewVotes : Model -> VotesResponse -> Element Classes variation Msg
 viewVotes model votes =
     let
@@ -260,7 +253,7 @@ viewVotes model votes =
               else
                 empty
             ]
-        , paragraph NoStyle [] [ text <| translate_ HelpImproveResult ]
+        , Element.map MsgForFlagLink (FlagLink.flagLink "123" model.url model.language model.flagLink)
         ]
 
 

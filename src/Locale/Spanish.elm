@@ -105,6 +105,9 @@ translate localeValue =
         HelpImproveResult ->
             "Ayude a mejorar este resultado instalando la extensión en su navegador"
 
+        ContentFlagged ->
+            "Contenido señalado, gracias!"
+
 
 explanation : String
 explanation =
