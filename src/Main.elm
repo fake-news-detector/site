@@ -1,11 +1,11 @@
 module Main exposing (..)
 
-import AutoExpand
 import Data.Category as Category exposing (Category)
 import Data.Votes as Votes exposing (PeopleVote, RobotVote, VerifiedVote, VotesResponse)
 import Element exposing (..)
 import Element.Attributes exposing (..)
 import Element.Events exposing (..)
+import Element.Input
 import FlagLink
 import Html exposing (Html)
 import List.Extra
@@ -16,6 +16,7 @@ import Markdown
 import RemoteData exposing (..)
 import Return
 import Stylesheet exposing (..)
+import Vendor.AutoExpand as AutoExpand
 
 
 type alias Model =
@@ -205,8 +206,9 @@ autoExpandConfig language =
         |> AutoExpand.withStyles
             [ ( "width", "100%" )
             , ( "resize", "none" )
-            , ( "border-color", "rgba(200,200,200,1)" )
+            , ( "border", "1px solid rgb(200,200,200)" )
             , ( "font-size", "100%" )
+            , ( "font", "inherit" )
             ]
 
 
