@@ -97,7 +97,7 @@ translate localeValue =
             "Opinión de las Personas"
 
         NothingWrongExample ->
-            "No parece tener nada mal con este enlace. ¿Quiere un ejemplo? "
+            "No parece tener nada mal con este contenido. ¿Quiere un ejemplo? "
 
         ClickHere ->
             "Haga clic aquí"

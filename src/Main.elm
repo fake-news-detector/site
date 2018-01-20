@@ -227,78 +227,89 @@ flagButtonAndVotes model =
         viewVerifiedVote vote =
             viewVote model (Category.toEmoji vote.category) "" vote.category (translate Verified)
     in
-    case decodeQuery model.query of
-        Invalid ->
-            paragraph NoStyle [] [ el General [ padding 5 ] (text <| translate InvalidQueryError) ]
+    column NoStyle
+        [ spacing 20 ]
+        [ when (decodeQuery model.query == Invalid)
+            (paragraph NoStyle [] [ el General [ padding 5 ] (text <| translate InvalidQueryError) ])
+        , el General
+            [ spacing 5, minWidth (px 130) ]
+            (case model.response of
+                Success response ->
+                    case response of
+                        QueryLinkResponse votes ->
+                            case votes.verified of
+                                Just vote ->
+                                    viewVerifiedVote vote
 
-        _ ->
-            el General
-                [ spacing 5, minWidth (px 130) ]
-                (case model.response of
-                    Success response ->
-                        case response of
-                            QueryLinkResponse votes ->
-                                case votes.verified of
-                                    Just vote ->
-                                        viewVerifiedVote vote
+                                Nothing ->
+                                    viewVotes model votes
 
-                                    Nothing ->
-                                        viewVotes model votes
+                        QueryContentResponse hoaxCheck ->
+                            if List.length hoaxCheck > 0 then
+                                viewRobotBestGuess model hoaxCheck
+                            else
+                                nothingWrongExample model
 
-                            QueryContentResponse hoaxCheck ->
-                                text "Not implemented"
+                Failure _ ->
+                    el VoteCountItem [ padding 6 ] (text <| translate LoadingError)
 
-                    Failure _ ->
-                        el VoteCountItem [ padding 6 ] (text <| translate LoadingError)
+                RemoteData.Loading ->
+                    text <| translate Locale.Words.Loading
 
-                    RemoteData.Loading ->
-                        text <| translate Locale.Words.Loading
-
-                    _ ->
-                        empty
-                )
+                _ ->
+                    empty
+            )
+        ]
 
 
 viewVotes : Model -> VotesResponse -> Element Classes variation Msg
 viewVotes model votes =
     let
-        viewRobotVote ( category, chance ) =
-            viewVote model "\x1F916" (toString chance ++ "%") category ""
-
         viewPeopleVote vote =
             viewVote model (Category.toEmoji vote.category) (toString vote.count) vote.category ""
-
-        translate_ =
-            translate model.language
     in
     column NoStyle
         [ spacing 30 ]
         [ wrappedRow NoStyle
             [ spacing 20 ]
-            [ case Votes.bestRobotGuess votes.robot of
-                Just bestGuess ->
-                    column NoStyle
-                        [ spacing 5 ]
-                        [ bold <| translate_ RobinhosOpinion
-                        , viewRobotVote bestGuess
-                        ]
-
-                Nothing ->
-                    empty
+            [ viewRobotBestGuess model votes.robot
             , if List.length votes.people > 0 then
-                column NoStyle [ spacing 5 ] ([ bold <| translate_ PeoplesOpinion ] ++ List.map viewPeopleVote votes.people)
+                column NoStyle [ spacing 5 ] ([ bold <| translate model.language PeoplesOpinion ] ++ List.map viewPeopleVote votes.people)
               else
                 empty
             , if List.length votes.people == 0 && Votes.bestRobotGuess votes.robot == Nothing then
-                paragraph NoStyle
-                    []
-                    [ text <| translate_ NothingWrongExample
-                    , el NoStyle [ onClick UseExample ] (link "javascript:" (underline <| translate_ ClickHere))
-                    ]
+                nothingWrongExample model
               else
                 empty
             ]
         , Element.map MsgForFlagLink (FlagLink.flagLink model.uuid model.query model.language model.flagLink)
+        ]
+
+
+viewRobotBestGuess : Model -> List RobotVote -> Element Classes variation Msg
+viewRobotBestGuess model robotVotes =
+    let
+        viewRobotVote ( category, chance ) =
+            viewVote model "\x1F916" (toString chance ++ "%") category ""
+    in
+    case Votes.bestRobotGuess robotVotes of
+        Just bestGuess ->
+            column NoStyle
+                [ spacing 5 ]
+                [ bold <| translate model.language RobinhosOpinion
+                , viewRobotVote bestGuess
+                ]
+
+        Nothing ->
+            empty
+
+
+nothingWrongExample : Model -> Element Classes variation Msg
+nothingWrongExample model =
+    paragraph NoStyle
+        []
+        [ text <| translate model.language NothingWrongExample
+        , el NoStyle [ onClick UseExample ] (link "javascript:" (underline <| translate model.language ClickHere))
         ]
 
 
