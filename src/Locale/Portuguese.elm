@@ -60,8 +60,8 @@ translate localeValue =
         FlagButton ->
             "🏴 Sinalizar"
 
-        InvalidUrlError ->
-            "Url inválida: "
+        InvalidQueryError ->
+            "Cole um texto ou link válido para checar"
 
         LoadingError ->
             "erro ao carregar"
