@@ -1,12 +1,11 @@
 module Main exposing (..)
 
 import Data.Category as Category exposing (Category)
-import Data.Hoaxes as Hoaxes exposing (HoaxCheckResponse, HoaxRobotVote)
 import Data.Votes as Votes exposing (PeopleVote, RobotVote, VerifiedVote, VotesResponse)
 import Element exposing (..)
 import Element.Attributes exposing (..)
 import Element.Events exposing (..)
-import FlagLink
+import FlagLink exposing (Query(..), decodeQuery)
 import Html exposing (Html)
 import Locale.Languages exposing (Language)
 import Locale.Locale as Locale exposing (translate)
@@ -23,15 +22,10 @@ type alias Model =
     , query : String
     , autoexpand : AutoExpand.State
     , refreshUrlCounter : Int -- hack: http://package.elm-lang.org/packages/mdgriffith/style-elements/4.2.0/Element-Input#textKey
-    , response : WebData QueryResponse
+    , response : WebData { query : String, votes : VotesResponse }
     , language : Language
     , flagLink : FlagLink.Model
     }
-
-
-type QueryResponse
-    = QueryLinkResponse VotesResponse
-    | QueryContentResponse HoaxCheckResponse
 
 
 type alias Flags =
@@ -39,7 +33,7 @@ type alias Flags =
 
 
 type Msg
-    = Response (WebData QueryResponse)
+    = Response String (WebData VotesResponse)
     | UpdateInput { textValue : String, state : AutoExpand.State }
     | Submit
     | UseExample
@@ -77,8 +71,13 @@ init flags =
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
-        Response response ->
-            ( { model | response = response, flagLink = FlagLink.init }, Cmd.none )
+        Response query response ->
+            ( { model
+                | response = RemoteData.map (\votes -> { query = query, votes = votes }) response
+                , flagLink = FlagLink.init
+              }
+            , Cmd.none
+            )
 
         UpdateInput { state, textValue } ->
             if String.isEmpty textValue then
@@ -97,14 +96,14 @@ update msg model =
                     ( { model | response = RemoteData.Loading }
                     , Votes.getVotes url ""
                         |> RemoteData.sendRequest
-                        |> Cmd.map (Response << RemoteData.map QueryLinkResponse)
+                        |> Cmd.map (Response model.query)
                     )
 
                 Content content ->
                     ( { model | response = RemoteData.Loading }
-                    , Hoaxes.getHoaxCheck content
+                    , Votes.getVotesByContent content
                         |> RemoteData.sendRequest
-                        |> Cmd.map (Response << RemoteData.map QueryContentResponse)
+                        |> Cmd.map (Response model.query)
                     )
 
                 Invalid ->
@@ -199,25 +198,6 @@ autoExpandConfig language =
             ]
 
 
-type Query
-    = Url String
-    | Content String
-    | Invalid
-    | Empty
-
-
-decodeQuery : String -> Query
-decodeQuery query =
-    if String.isEmpty query then
-        Empty
-    else if String.startsWith "http" query then
-        Url query
-    else if String.length query >= 20 then
-        Content query
-    else
-        Invalid
-
-
 flagButtonAndVotes : Model -> Element Classes variation Msg
 flagButtonAndVotes model =
     let
@@ -234,21 +214,13 @@ flagButtonAndVotes model =
         , el General
             [ spacing 5, minWidth (px 130) ]
             (case model.response of
-                Success response ->
-                    case response of
-                        QueryLinkResponse votes ->
-                            case votes.verified of
-                                Just vote ->
-                                    viewVerifiedVote vote
+                Success { query, votes } ->
+                    case votes.verified of
+                        Just vote ->
+                            viewVerifiedVote vote
 
-                                Nothing ->
-                                    viewVotes model votes
-
-                        QueryContentResponse hoaxCheck ->
-                            if List.length hoaxCheck > 0 then
-                                viewRobotBestGuess model hoaxCheck
-                            else
-                                nothingWrongExample model
+                        Nothing ->
+                            viewVotes model query votes
 
                 Failure _ ->
                     el VoteCountItem [ padding 6 ] (text <| translate LoadingError)
@@ -262,8 +234,8 @@ flagButtonAndVotes model =
         ]
 
 
-viewVotes : Model -> VotesResponse -> Element Classes variation Msg
-viewVotes model votes =
+viewVotes : Model -> String -> VotesResponse -> Element Classes variation Msg
+viewVotes model query votes =
     let
         viewPeopleVote vote =
             viewVote model (Category.toEmoji vote.category) (toString vote.count) vote.category ""
@@ -282,7 +254,7 @@ viewVotes model votes =
               else
                 empty
             ]
-        , Element.map MsgForFlagLink (FlagLink.flagLink model.uuid model.query model.language model.flagLink)
+        , Element.map MsgForFlagLink (FlagLink.flagLink model.uuid query model.language model.flagLink)
         ]
 
 

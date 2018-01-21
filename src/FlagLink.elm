@@ -58,11 +58,26 @@ update msg model =
         SubmitFlag uuid url ->
             case model.selectedCategory of
                 Just selectedCategory ->
-                    ( { model | submitResponse = RemoteData.Loading }
-                    , Votes.postVote uuid url "" selectedCategory
-                        |> RemoteData.sendRequest
-                        |> Cmd.map SubmitResponse
-                    )
+                    case decodeQuery url of
+                        Url url ->
+                            ( { model | submitResponse = RemoteData.Loading }
+                            , Votes.postVote uuid url "" selectedCategory
+                                |> RemoteData.sendRequest
+                                |> Cmd.map SubmitResponse
+                            )
+
+                        Content content ->
+                            ( { model | submitResponse = RemoteData.Loading }
+                            , Votes.postVoteByContent uuid content selectedCategory
+                                |> RemoteData.sendRequest
+                                |> Cmd.map SubmitResponse
+                            )
+
+                        Invalid ->
+                            ( model, Cmd.none )
+
+                        Empty ->
+                            ( model, Cmd.none )
 
                 Nothing ->
                     ( model, Cmd.none )
@@ -162,3 +177,22 @@ flagChoice category title description =
             [ bold title
             , paragraph NoStyle [] [ text description ]
             ]
+
+
+type Query
+    = Url String
+    | Content String
+    | Invalid
+    | Empty
+
+
+decodeQuery : String -> Query
+decodeQuery query =
+    if String.isEmpty query then
+        Empty
+    else if String.startsWith "http" query then
+        Url query
+    else if String.length query >= 20 then
+        Content query
+    else
+        Invalid

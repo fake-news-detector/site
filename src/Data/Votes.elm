@@ -55,6 +55,11 @@ getVotes url title =
     Http.get ("https://api.fakenewsdetector.org/votes?url=" ++ encodeUri url ++ "&title=" ++ encodeUri title) decodeVotesResponse
 
 
+getVotesByContent : String -> Http.Request VotesResponse
+getVotesByContent content =
+    Http.get ("https://api.fakenewsdetector.org/votes_by_content?content=" ++ encodeUri content) decodeVotesResponse
+
+
 encodeNewVote : String -> String -> String -> Category -> Json.Encode.Value
 encodeNewVote uuid url title category =
     Json.Encode.object
@@ -69,6 +74,22 @@ postVote : String -> String -> String -> Category -> Http.Request ()
 postVote uuid url title category =
     Http.post "https://api.fakenewsdetector.org/vote"
         (Http.jsonBody (encodeNewVote uuid url title category))
+        (Json.Decode.succeed ())
+
+
+encodeNewVoteByContent : String -> String -> Category -> Json.Encode.Value
+encodeNewVoteByContent uuid content category =
+    Json.Encode.object
+        [ ( "uuid", Json.Encode.string uuid )
+        , ( "content", Json.Encode.string content )
+        , ( "category_id", Json.Encode.int (Category.toId category) )
+        ]
+
+
+postVoteByContent : String -> String -> Category -> Http.Request ()
+postVoteByContent uuid content category =
+    Http.post "https://api.fakenewsdetector.org/vote_by_content"
+        (Http.jsonBody (encodeNewVoteByContent uuid content category))
         (Json.Decode.succeed ())
 
 
