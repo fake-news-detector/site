@@ -60,8 +60,8 @@ translate localeValue =
         FlagButton ->
             "🏴 Señalar"
 
-        InvalidUrlError ->
-            "Url inválida: "
+        InvalidQueryError ->
+            "Pega un texto o enlace valido para verificar"
 
         LoadingError ->
             "error al cargar"
@@ -79,7 +79,7 @@ translate localeValue =
             "verificar"
 
         PasteLink ->
-            "Pega un enlace aquí para comprobar si es Fake News"
+            "Pega un link o texto sospechoso aquí"
 
         FakeNewsDetector ->
             "Detector de Fake News"
@@ -97,7 +97,7 @@ translate localeValue =
             "Opinión de las Personas"
 
         NothingWrongExample ->
-            "No parece tener nada mal con este enlace. ¿Quiere un ejemplo? "
+            "No parece tener nada mal con este contenido. ¿Quiere un ejemplo? "
 
         ClickHere ->
             "Haga clic aquí"

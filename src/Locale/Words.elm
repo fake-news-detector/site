@@ -20,7 +20,7 @@ type LocaleKey
     | NotNewsDescription
     | Verified
     | FlagButton
-    | InvalidUrlError
+    | InvalidQueryError
     | LoadingError
     | TimeoutError
     | NetworkError
