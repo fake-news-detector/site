@@ -1,5 +1,6 @@
 module Main exposing (..)
 
+import AutoExpand as AutoExpand
 import Data.Category as Category exposing (Category)
 import Data.Votes as Votes exposing (PeopleVote, RobotVote, VerifiedVote, VotesResponse)
 import Element exposing (..)
@@ -14,7 +15,6 @@ import Markdown
 import RemoteData exposing (..)
 import Return
 import Stylesheet exposing (..)
-import Vendor.AutoExpand as AutoExpand
 
 
 type alias Model =
