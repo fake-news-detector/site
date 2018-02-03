@@ -108,6 +108,15 @@ translate localeValue =
         ContentFlagged ->
             "Conteúdo sinalizado, obrigado!"
 
+        LooksLike ->
+            "Parece"
+
+        LooksALotLike ->
+            "Parece muito"
+
+        AlmostCertain ->
+            "Tenho quase certeza que é"
+
 
 explanation : String
 explanation =

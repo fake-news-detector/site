@@ -36,3 +36,6 @@ type LocaleKey
     | ClickHere
     | HelpImproveResult
     | ContentFlagged
+    | LooksLike
+    | LooksALotLike
+    | AlmostCertain

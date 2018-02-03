@@ -96,10 +96,13 @@ flagLink uuid url language model =
             flagForm uuid url language model
 
         Closed ->
-            paragraph NoStyle
-                [ verticalCenter ]
-                [ el NoStyle [ paddingRight 5 ] (text <| translate language Words.HelpImproveResult)
-                , flagButton language model
+            column NoStyle
+                []
+                [ paragraph NoStyle
+                    [ verticalCenter ]
+                    [ el NoStyle [ paddingRight 5 ] (text <| translate language Words.HelpImproveResult)
+                    , flagButton language model
+                    ]
                 ]
 
         Flagged ->

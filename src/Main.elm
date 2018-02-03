@@ -262,7 +262,7 @@ viewRobotBestGuess : Model -> List RobotVote -> Element Classes variation Msg
 viewRobotBestGuess model robotVotes =
     let
         viewRobotVote ( category, chance ) =
-            viewVote model "\x1F916" (toString chance ++ "%") category ""
+            viewVote model "\x1F916" (chanceToText chance model) category ""
     in
     case Votes.bestRobotGuess robotVotes of
         Just bestGuess ->
@@ -274,6 +274,20 @@ viewRobotBestGuess model robotVotes =
 
         Nothing ->
             empty
+
+
+chanceToText : number -> Model -> String
+chanceToText chance model =
+    let
+        rebalancedChance =
+            (chance - 50) * 2
+    in
+    if rebalancedChance >= 66 then
+        Locale.translate model.language AlmostCertain
+    else if rebalancedChance >= 33 then
+        Locale.translate model.language LooksALotLike
+    else
+        Locale.translate model.language LooksLike
 
 
 nothingWrongExample : Model -> Element Classes variation Msg
