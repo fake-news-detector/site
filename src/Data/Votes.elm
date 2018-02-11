@@ -2,7 +2,7 @@ module Data.Votes exposing (..)
 
 import Data.Category as Category exposing (..)
 import Http exposing (encodeUri)
-import Json.Decode exposing (Decoder, float, int, list, nullable)
+import Json.Decode exposing (Decoder, float, int, list, nullable, string)
 import Json.Decode.Pipeline exposing (decode, required)
 import Json.Encode
 import List.Extra
@@ -21,7 +21,11 @@ type alias VerifiedVote =
 
 
 type alias VotesResponse =
-    { verified : Maybe VerifiedVote, robot : List RobotVote, people : List PeopleVote }
+    { verified : Maybe VerifiedVote
+    , robot : List RobotVote
+    , people : List PeopleVote
+    , keywords : List String
+    }
 
 
 decodeVotesResponse : Decoder VotesResponse
@@ -48,6 +52,7 @@ decodeVotesResponse =
         |> required "verified" (nullable decodeVerifiedVote)
         |> required "robot" (list decodeRobotVote)
         |> required "people" (list decodePeopleVote)
+        |> required "keywords" (list string)
 
 
 getVotes : String -> String -> Http.Request VotesResponse

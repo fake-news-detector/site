@@ -13,7 +13,6 @@ type Classes
     | General
     | Button
     | BlueButton
-    | VoteCountItem
     | Overlay
     | Popup
     | Title
@@ -47,9 +46,6 @@ stylesheet =
             [ Color.text white
             , Color.background (rgb 66 103 178)
             , Border.rounded 2
-            ]
-        , style VoteCountItem
-            [ Font.size 16
             ]
         , style VoteEmoji
             [ Font.size 22

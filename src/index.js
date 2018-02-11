@@ -25,6 +25,10 @@ if (path === "/") {
 const rootNode = document.getElementById("app");
 rootNode.innerHTML = "";
 
+window.resizeIframe = elem => {
+  elem.style.height = elem.contentWindow.document.body.scrollHeight + "px";
+};
+
 App.Main.embed(rootNode, { languages: [language], uuid });
 
 if (!process.env.DEBUG && "serviceWorker" in navigator) {

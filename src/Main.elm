@@ -8,6 +8,8 @@ import Element.Attributes exposing (..)
 import Element.Events exposing (..)
 import FlagLink exposing (Query(..), decodeQuery)
 import Html exposing (Html)
+import Html.Attributes
+import Http exposing (encodeUri)
 import Locale.Languages exposing (Language)
 import Locale.Locale as Locale exposing (translate)
 import Locale.Words exposing (LocaleKey(..))
@@ -223,7 +225,7 @@ flagButtonAndVotes model =
                             viewVotes model query votes
 
                 Failure _ ->
-                    el VoteCountItem [ padding 6 ] (text <| translate LoadingError)
+                    el NoStyle [ padding 6 ] (text <| translate LoadingError)
 
                 RemoteData.Loading ->
                     text <| translate Locale.Words.Loading
@@ -255,6 +257,24 @@ viewVotes model query votes =
                 empty
             ]
         , Element.map MsgForFlagLink (FlagLink.flagLink model.uuid query model.language model.flagLink)
+        , column NoStyle
+            [ spacing 10 ]
+            [ bold <| translate model.language CheckYourself
+            , paragraph NoStyle [] [ text <| translate model.language WeDidAGoogleSearch ]
+            , el NoStyle
+                []
+                (Element.html
+                    (Html.iframe
+                        [ Html.Attributes.src ("static/searchResults.html?q=" ++ encodeUri (String.join " " votes.keywords))
+                        , Html.Attributes.attribute "frameBorder" "0"
+                        , Html.Attributes.attribute "height" "300px"
+                        , Html.Attributes.attribute "width" "100%"
+                        , Html.Attributes.attribute "onload" "resizeIframe(this)"
+                        ]
+                        []
+                    )
+                )
+            ]
         ]
 
 
@@ -301,7 +321,7 @@ nothingWrongExample model =
 
 viewVote : Model -> String -> String -> Category -> String -> Element Classes variation msg
 viewVote model icon preText category postText =
-    row VoteCountItem
+    row NoStyle
         [ padding 6, spacing 5, height (px 32) ]
         [ el VoteEmoji [ moveUp 4 ] (text icon)
         , text preText

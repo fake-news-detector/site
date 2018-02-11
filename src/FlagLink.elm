@@ -91,22 +91,23 @@ update msg model =
 
 flagLink : String -> String -> Language -> Model -> Element Classes variation Msg
 flagLink uuid url language model =
-    case model.state of
-        Opened ->
-            flagForm uuid url language model
+    column NoStyle
+        []
+        [ bold <| translate language Words.HelpRobinho
+        , case model.state of
+            Opened ->
+                flagForm uuid url language model
 
-        Closed ->
-            column NoStyle
-                []
-                [ paragraph NoStyle
+            Closed ->
+                paragraph NoStyle
                     [ verticalCenter ]
                     [ el NoStyle [ paddingRight 5 ] (text <| translate language Words.HelpImproveResult)
                     , flagButton language model
                     ]
-                ]
 
-        Flagged ->
-            text (translate language Words.ContentFlagged)
+            Flagged ->
+                text (translate language Words.ContentFlagged)
+        ]
 
 
 flagButton : Language -> Model -> Element Classes variation Msg
@@ -124,7 +125,7 @@ flagForm uuid url language model =
     in
     node "form" <|
         column NoStyle
-            [ spacing 15 ]
+            [ spacing 15, paddingTop 10 ]
             [ Input.radio NoStyle
                 [ spacing 15
                 ]

@@ -117,6 +117,15 @@ translate localeValue =
         AlmostCertain ->
             "Tenho quase certeza que é"
 
+        HelpRobinho ->
+            "Corrija o Robinho"
+
+        CheckYourself ->
+            "Confira você mesmo"
+
+        WeDidAGoogleSearch ->
+            "Fizemos uma busca no Google com as palavras-chave extraídas do texto"
+
 
 explanation : String
 explanation =

@@ -103,7 +103,7 @@ translate localeValue =
             "Haga clic aquí"
 
         HelpImproveResult ->
-            "Ayude a mejorar este resultado instalando la extensión en su navegador"
+            "¿Crees que este resultado está equivocado?"
 
         ContentFlagged ->
             "Contenido señalado, gracias!"
@@ -116,6 +116,15 @@ translate localeValue =
 
         AlmostCertain ->
             "Estoy casi seguro que es"
+
+        HelpRobinho ->
+            "Corrija el Robinho"
+
+        CheckYourself ->
+            "Compruébalo tu mismo"
+
+        WeDidAGoogleSearch ->
+            "Hicimos una búsqueda en Google con las palabras clave extraídas del texto"
 
 
 explanation : String

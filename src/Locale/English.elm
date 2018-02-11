@@ -58,7 +58,7 @@ translate localeValue =
             "(verified)"
 
         FlagButton ->
-            "🏴 Flag"
+            "🏴 Flag it"
 
         InvalidQueryError ->
             "Paste a valid link or text to check"
@@ -103,7 +103,7 @@ translate localeValue =
             "Click here"
 
         HelpImproveResult ->
-            "Help improve this result by installing the extension in your browser"
+            "Do you believe this result is wrong?"
 
         ContentFlagged ->
             "Content flagged, thank you!"
@@ -116,6 +116,15 @@ translate localeValue =
 
         AlmostCertain ->
             "I'm almost certain it is"
+
+        HelpRobinho ->
+            "Help Robinho"
+
+        CheckYourself ->
+            "Check it yourself"
+
+        WeDidAGoogleSearch ->
+            "We did a Google search with keywords extracted from the text"
 
 
 explanation : String

@@ -39,3 +39,6 @@ type LocaleKey
     | LooksLike
     | LooksALotLike
     | AlmostCertain
+    | HelpRobinho
+    | CheckYourself
+    | WeDidAGoogleSearch
