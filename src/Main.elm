@@ -257,24 +257,30 @@ viewVotes model query votes =
                 empty
             ]
         , Element.map MsgForFlagLink (FlagLink.flagLink model.uuid query model.language model.flagLink)
-        , column NoStyle
-            [ spacing 10 ]
-            [ bold <| translate model.language CheckYourself
-            , paragraph NoStyle [] [ text <| translate model.language WeDidAGoogleSearch ]
-            , el NoStyle
-                []
-                (Element.html
-                    (Html.iframe
-                        [ Html.Attributes.src ("static/searchResults.html?q=" ++ encodeUri (String.join " " votes.keywords))
-                        , Html.Attributes.attribute "frameBorder" "0"
-                        , Html.Attributes.attribute "height" "300px"
-                        , Html.Attributes.attribute "width" "100%"
-                        , Html.Attributes.attribute "onload" "resizeIframe(this)"
-                        ]
-                        []
-                    )
+        , when (List.length votes.keywords > 0)
+            (viewSearchResults model votes)
+        ]
+
+
+viewSearchResults : Model -> VotesResponse -> Element Classes variation msg
+viewSearchResults model votes =
+    column NoStyle
+        [ spacing 10 ]
+        [ bold <| translate model.language CheckYourself
+        , paragraph NoStyle [] [ text <| translate model.language WeDidAGoogleSearch ]
+        , el NoStyle
+            []
+            (Element.html
+                (Html.iframe
+                    [ Html.Attributes.src ("static/searchResults.html?q=" ++ encodeUri (String.join " " votes.keywords))
+                    , Html.Attributes.attribute "frameBorder" "0"
+                    , Html.Attributes.attribute "height" "300px"
+                    , Html.Attributes.attribute "width" "100%"
+                    , Html.Attributes.attribute "onload" "resizeIframe(this)"
+                    ]
+                    []
                 )
-            ]
+            )
         ]
 
 
