@@ -46,6 +46,9 @@ stylesheet =
             [ Color.text white
             , Color.background (rgb 66 103 178)
             , Border.rounded 2
+            , pseudo "active"
+                [ Color.background (rgb 46 83 158)
+                ]
             ]
         , style VoteEmoji
             [ Font.size 22
