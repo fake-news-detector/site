@@ -10,14 +10,19 @@ type LocaleKey
     | LegitimateDescription
     | FakeNews
     | FakeNewsDescription
-    | ClickBait
-    | ClickBaitDescription
     | ExtremelyBiased
     | ExtremelyBiasedDescription
     | Satire
     | SatireDescription
     | NotNews
     | NotNewsDescription
+    | Clickbait
+    | ClickbaitQuestion
+    | ClickbaitDescription
+    | Yes
+    | No
+    | DontKnow
+    | FillAllFields
     | Verified
     | FlagButton
     | InvalidQueryError

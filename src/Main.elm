@@ -205,9 +205,6 @@ flagButtonAndVotes model =
     let
         translate =
             Locale.translate model.language
-
-        viewVerifiedVote vote =
-            viewVote model (Category.toEmoji vote.category) "" vote.category (translate Verified)
     in
     column NoStyle
         [ spacing 20 ]
@@ -217,12 +214,7 @@ flagButtonAndVotes model =
             [ spacing 5, minWidth (px 130) ]
             (case model.response of
                 Success { query, votes } ->
-                    case votes.verified of
-                        Just vote ->
-                            viewVerifiedVote vote
-
-                        Nothing ->
-                            viewVotes model query votes
+                    viewVotes model query votes
 
                 Failure _ ->
                     el NoStyle [ padding 6 ] (text <| translate LoadingError)
@@ -246,12 +238,12 @@ viewVotes model query votes =
         [ spacing 30 ]
         [ wrappedRow NoStyle
             [ spacing 20 ]
-            [ viewRobotBestGuess model votes.robot
+            [ viewRobotBestGuess model votes.verified votes.robot
             , if List.length votes.people > 0 then
                 column NoStyle [ spacing 5 ] ([ bold <| translate model.language PeoplesOpinion ] ++ List.map viewPeopleVote votes.people)
               else
                 empty
-            , if List.length votes.people == 0 && Votes.bestRobotGuess votes.robot == Nothing then
+            , if List.length votes.people == 0 && Votes.bestRobotGuess votes.robot == Nothing && votes.verified == Nothing then
                 nothingWrongExample model
               else
                 empty
@@ -284,21 +276,28 @@ viewSearchResults model votes =
         ]
 
 
-viewRobotBestGuess : Model -> List RobotVote -> Element Classes variation Msg
-viewRobotBestGuess model robotVotes =
+viewRobotBestGuess : Model -> Maybe VerifiedVote -> List RobotVote -> Element Classes variation Msg
+viewRobotBestGuess model verifiedVote robotVotes =
     let
         viewRobotVote ( category, chance ) =
             viewVote model "\x1F916" (chanceToText chance model) category ""
     in
-    case Votes.bestRobotGuess robotVotes of
-        Just bestGuess ->
+    case ( verifiedVote, Votes.bestRobotGuess robotVotes ) of
+        ( Just vote, _ ) ->
+            column NoStyle
+                [ spacing 5 ]
+                [ bold <| translate model.language RobinhosOpinion
+                , viewVerifiedVote model vote
+                ]
+
+        ( _, Just bestGuess ) ->
             column NoStyle
                 [ spacing 5 ]
                 [ bold <| translate model.language RobinhosOpinion
                 , viewRobotVote bestGuess
                 ]
 
-        Nothing ->
+        _ ->
             empty
 
 
@@ -334,6 +333,11 @@ viewVote model icon preText category postText =
         , text <| String.toLower <| translate model.language (Category.toName category)
         , text postText
         ]
+
+
+viewVerifiedVote : Model -> VerifiedVote -> Element Classes variation msg
+viewVerifiedVote model vote =
+    viewVote model (Category.toEmoji vote.category) "" vote.category (translate model.language Verified)
 
 
 explanation : Model -> Element Classes variation msg
