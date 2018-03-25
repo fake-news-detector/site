@@ -63,34 +63,26 @@ update msg model =
             ( { model | selectedClickbaitTitle = Just isClickbaitTitle }, Cmd.none )
 
         SubmitFlag uuid url language ->
-            case ( model.selectedCategory, model.selectedClickbaitTitle ) of
-                ( Just selectedCategory, Just selectedClickbaitTitle ) ->
-                    case decodeQuery url of
-                        Url url ->
-                            ( { model | submitResponse = RemoteData.Loading }
-                            , Votes.postVote
-                                { uuid = uuid
-                                , url = url
-                                , title = ""
-                                , category = selectedCategory
-                                , clickbaitTitle = selectedClickbaitTitle
-                                }
-                                |> RemoteData.sendRequest
-                                |> Cmd.map SubmitResponse
-                            )
+            case ( decodeQuery url, model.selectedCategory, model.selectedClickbaitTitle ) of
+                ( Url url, Just selectedCategory, Just selectedClickbaitTitle ) ->
+                    ( { model | submitResponse = RemoteData.Loading }
+                    , Votes.postVote
+                        { uuid = uuid
+                        , url = url
+                        , title = ""
+                        , category = selectedCategory
+                        , clickbaitTitle = selectedClickbaitTitle
+                        }
+                        |> RemoteData.sendRequest
+                        |> Cmd.map SubmitResponse
+                    )
 
-                        Content content ->
-                            ( { model | submitResponse = RemoteData.Loading }
-                            , Votes.postVoteByContent uuid content selectedCategory
-                                |> RemoteData.sendRequest
-                                |> Cmd.map SubmitResponse
-                            )
-
-                        Invalid ->
-                            ( model, Cmd.none )
-
-                        Empty ->
-                            ( model, Cmd.none )
+                ( Content content, Just selectedCategory, _ ) ->
+                    ( { model | submitResponse = RemoteData.Loading }
+                    , Votes.postVoteByContent uuid content selectedCategory
+                        |> RemoteData.sendRequest
+                        |> Cmd.map SubmitResponse
+                    )
 
                 _ ->
                     -- TODO: Remove this workaround, use elm-form for validations instead
@@ -170,25 +162,33 @@ flagForm uuid url language model =
                         (translate Words.NotNewsDescription)
                     ]
                 }
-            , Element.column NoStyle
-                [ paddingTop 15, spacing 4 ]
-                [ bold <| translate Words.ClickbaitQuestion
-                , paragraph NoStyle [] [ text <| translate Words.ClickbaitDescription ]
-                ]
-            , Input.radioRow NoStyle
-                [ spacing 15
-                , paddingTop 4
-                ]
-                { onChange = SelectClickbaitTitle
-                , selected = model.selectedClickbaitTitle
-                , label = Input.labelAbove empty
-                , options = []
-                , choices =
-                    [ Input.choice Yes (text <| translate Words.Yes)
-                    , Input.choice No (text <| translate Words.No)
-                    , Input.choice DontKnow (text <| translate Words.DontKnow)
-                    ]
-                }
+            , case decodeQuery url of
+                Url url ->
+                    column NoStyle
+                        []
+                        [ Element.column NoStyle
+                            [ paddingTop 15, spacing 4 ]
+                            [ bold <| translate Words.ClickbaitQuestion
+                            , paragraph NoStyle [] [ text <| translate Words.ClickbaitDescription ]
+                            ]
+                        , Input.radioRow NoStyle
+                            [ spacing 15
+                            , paddingTop 4
+                            ]
+                            { onChange = SelectClickbaitTitle
+                            , selected = model.selectedClickbaitTitle
+                            , label = Input.labelAbove empty
+                            , options = []
+                            , choices =
+                                [ Input.choice Yes (text <| translate Words.Yes)
+                                , Input.choice No (text <| translate Words.No)
+                                , Input.choice DontKnow (text <| translate Words.DontKnow)
+                                ]
+                            }
+                        ]
+
+                _ ->
+                    empty
             , case model.submitResponse of
                 Failure err ->
                     paragraph ErrorMessage [ padding 6 ] [ text (humanizeError language err) ]
