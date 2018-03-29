@@ -2,7 +2,7 @@ module Data.Votes exposing (..)
 
 import Data.Category as Category exposing (..)
 import Http exposing (encodeUri)
-import Json.Decode exposing (Decoder, float, int, list, nullable, string)
+import Json.Decode exposing (Decoder, float, int, list, nullable, oneOf, string)
 import Json.Decode.Pipeline exposing (decode, required)
 import Json.Encode
 import List.Extra
@@ -20,7 +20,20 @@ type alias VerifiedVote =
     { category : Category }
 
 
+type alias ContentVotes =
+    { robot : List RobotVote
+    , people : List PeopleVote
+    }
+
+
 type alias VotesResponse =
+    { domain : Maybe VerifiedVote
+    , content : ContentVotes
+    , keywords : List String
+    }
+
+
+type alias OldVotesResponse =
     { verified : Maybe VerifiedVote
     , robot : List RobotVote
     , people : List PeopleVote
@@ -62,7 +75,7 @@ decodeVotesResponse =
         decodeCategory =
             required "category_id" (Json.Decode.map Category.fromId int)
 
-        decodeVerifiedVote =
+        decodeDomainCategory =
             decode VerifiedVote
                 |> decodeCategory
 
@@ -75,22 +88,45 @@ decodeVotesResponse =
             decode PeopleVote
                 |> decodeCategory
                 |> required "count" int
+
+        decodeContentVotes =
+            decode ContentVotes
+                |> required "robot" (list decodeRobotVote)
+                |> required "people" (list decodePeopleVote)
     in
-    decode VotesResponse
-        |> required "verified" (nullable decodeVerifiedVote)
-        |> required "robot" (list decodeRobotVote)
-        |> required "people" (list decodePeopleVote)
-        |> required "keywords" (list string)
+    oneOf
+        [ decode VotesResponse
+            |> required "domain" (nullable decodeDomainCategory)
+            |> required "content" decodeContentVotes
+            |> required "keywords" (list string)
+        , decode OldVotesResponse
+            |> required "verified" (nullable decodeDomainCategory)
+            |> required "robot" (list decodeRobotVote)
+            |> required "people" (list decodePeopleVote)
+            |> required "keywords" (list string)
+            |> Json.Decode.map
+                (\old ->
+                    { domain = old.verified
+                    , content = { robot = old.robot, people = old.people }
+                    , keywords = old.keywords
+                    }
+                )
+        ]
+
+
+apiUrl : String
+apiUrl =
+    "https://api.fakenewsdetector.org"
 
 
 getVotes : String -> String -> Http.Request VotesResponse
 getVotes url title =
-    Http.get ("https://api.fakenewsdetector.org/votes?url=" ++ encodeUri url ++ "&title=" ++ encodeUri title) decodeVotesResponse
+    Http.get (apiUrl ++ "/votes?url=" ++ encodeUri url ++ "&title=" ++ encodeUri title) decodeVotesResponse
 
 
 getVotesByContent : String -> Http.Request VotesResponse
 getVotesByContent content =
-    Http.get ("https://api.fakenewsdetector.org/votes_by_content?content=" ++ encodeUri content) decodeVotesResponse
+    Http.get (apiUrl ++ "/votes_by_content?content=" ++ encodeUri content) decodeVotesResponse
 
 
 encodeNewVote : NewVote -> Json.Encode.Value
@@ -106,7 +142,7 @@ encodeNewVote { uuid, url, title, category, clickbaitTitle } =
 
 postVote : NewVote -> Http.Request ()
 postVote newVote =
-    Http.post "https://api.fakenewsdetector.org/vote"
+    Http.post (apiUrl ++ "/vote")
         (Http.jsonBody (encodeNewVote newVote))
         (Json.Decode.succeed ())
 
@@ -122,7 +158,7 @@ encodeNewVoteByContent uuid content category =
 
 postVoteByContent : String -> String -> Category -> Http.Request ()
 postVoteByContent uuid content category =
-    Http.post "https://api.fakenewsdetector.org/vote_by_content"
+    Http.post (apiUrl ++ "/vote_by_content")
         (Http.jsonBody (encodeNewVoteByContent uuid content category))
         (Json.Decode.succeed ())
 
