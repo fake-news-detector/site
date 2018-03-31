@@ -8,7 +8,7 @@
     "start:dist": "http-server build",
     "build": "rm -r ./build; npm run generate-html && NODE_ENV=production webpack --progress && sw-precache --config=sw-precache-config.js",
     "generate-html": "mkdir -p build/static/pages && elm-static-html -c elm-static-html.json",
-    "install": "elm package install -y",
+    "install": "elm-package install -y && cd test && elm-package install -y",
     "deploy": "./deploy.sh",
     "test": "elm-test"
   },
