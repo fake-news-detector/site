@@ -2,7 +2,7 @@ module Data.Votes exposing (..)
 
 import Data.Category as Category exposing (..)
 import Http exposing (encodeUri)
-import Json.Decode exposing (Decoder, float, int, list, nullable, oneOf, string)
+import Json.Decode exposing (Decoder, float, int, list, nullable, string)
 import Json.Decode.Pipeline exposing (decode, required)
 import Json.Encode
 import List.Extra
@@ -94,24 +94,10 @@ decodeVotesResponse =
                 |> required "robot" (list decodeRobotVote)
                 |> required "people" (list decodePeopleVote)
     in
-    oneOf
-        [ decode VotesResponse
-            |> required "domain" (nullable decodeDomainCategory)
-            |> required "content" decodeContentVotes
-            |> required "keywords" (list string)
-        , decode OldVotesResponse
-            |> required "verified" (nullable decodeDomainCategory)
-            |> required "robot" (list decodeRobotVote)
-            |> required "people" (list decodePeopleVote)
-            |> required "keywords" (list string)
-            |> Json.Decode.map
-                (\old ->
-                    { domain = old.verified
-                    , content = { robot = old.robot, people = old.people }
-                    , keywords = old.keywords
-                    }
-                )
-        ]
+    decode VotesResponse
+        |> required "domain" (nullable decodeDomainCategory)
+        |> required "content" decodeContentVotes
+        |> required "keywords" (list string)
 
 
 apiUrl : String
