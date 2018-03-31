@@ -2,7 +2,7 @@ module Main exposing (..)
 
 import AutoExpand as AutoExpand
 import Data.Category as Category exposing (Category)
-import Data.Votes as Votes exposing (PeopleVote, RobotVote, VerifiedVote, VotesResponse)
+import Data.Votes as Votes exposing (PeopleVotes, RobotPredictions, VerifiedVote, VotesResponse)
 import Element exposing (..)
 import Element.Attributes exposing (..)
 import Element.Events exposing (..)
@@ -238,12 +238,12 @@ viewVotes model query votes =
         [ spacing 30 ]
         [ wrappedRow NoStyle
             [ spacing 20 ]
-            [ viewRobotBestGuess model votes.domain votes.content.robot
-            , if List.length votes.content.people > 0 then
-                column NoStyle [ spacing 5 ] ([ bold <| translate model.language PeoplesOpinion ] ++ List.map viewPeopleVote votes.content.people)
+            [ viewRobotBestGuess model votes.domain votes.robot
+            , if List.length votes.people.content > 0 then
+                column NoStyle [ spacing 5 ] ([ bold <| translate model.language PeoplesOpinion ] ++ List.map viewPeopleVote votes.people.content)
               else
                 empty
-            , if List.length votes.content.people == 0 && Votes.bestRobotGuess votes.content.robot == Nothing && votes.domain == Nothing then
+            , if List.length votes.people.content == 0 && Votes.bestRobotGuess votes.robot == Nothing && votes.domain == Nothing then
                 nothingWrongExample model
               else
                 empty
@@ -276,7 +276,7 @@ viewSearchResults model votes =
         ]
 
 
-viewRobotBestGuess : Model -> Maybe VerifiedVote -> List RobotVote -> Element Classes variation Msg
+viewRobotBestGuess : Model -> Maybe VerifiedVote -> RobotPredictions -> Element Classes variation Msg
 viewRobotBestGuess model verifiedVote robotVotes =
     let
         viewRobotVote ( category, chance ) =
