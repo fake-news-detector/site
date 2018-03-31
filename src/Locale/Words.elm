@@ -10,6 +10,7 @@ type LocaleKey
     | LegitimateDescription
     | FakeNews
     | FakeNewsDescription
+    | Biased
     | ExtremelyBiased
     | ExtremelyBiasedDescription
     | Satire

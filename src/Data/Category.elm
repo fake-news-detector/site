@@ -94,7 +94,7 @@ toName category =
             Words.Clickbait
 
         ExtremelyBiased ->
-            Words.ExtremelyBiased
+            Words.Biased
 
         Satire ->
             Words.Satire

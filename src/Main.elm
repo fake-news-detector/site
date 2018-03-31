@@ -231,6 +231,9 @@ flagButtonAndVotes model =
 viewVotes : Model -> String -> VotesResponse -> Element Classes variation Msg
 viewVotes model query votes =
     let
+        peopleVotes =
+            Votes.joinClickbaitCategory votes.people
+
         viewPeopleVote vote =
             viewVote model (Category.toEmoji vote.category) (toString vote.count) vote.category ""
     in
@@ -239,11 +242,11 @@ viewVotes model query votes =
         [ wrappedRow NoStyle
             [ spacing 20 ]
             [ viewRobotBestGuess model votes.domain votes.robot
-            , if List.length votes.people.content > 0 then
-                column NoStyle [ spacing 5 ] ([ bold <| translate model.language PeoplesOpinion ] ++ List.map viewPeopleVote votes.people.content)
+            , if List.length peopleVotes > 0 then
+                column NoStyle [ spacing 5 ] ([ bold <| translate model.language PeoplesOpinion ] ++ List.map viewPeopleVote peopleVotes)
               else
                 empty
-            , if List.length votes.people.content == 0 && Votes.bestRobotGuess votes.robot == Nothing && votes.domain == Nothing then
+            , if List.length peopleVotes == 0 && Votes.bestRobotGuess votes.robot == Nothing && votes.domain == Nothing then
                 nothingWrongExample model
               else
                 empty
@@ -279,40 +282,26 @@ viewSearchResults model votes =
 viewRobotBestGuess : Model -> Maybe VerifiedVote -> RobotPredictions -> Element Classes variation Msg
 viewRobotBestGuess model verifiedVote robotVotes =
     let
-        viewRobotVote ( category, chance ) =
-            viewVote model "\x1F916" (chanceToText chance model) category ""
-    in
-    case ( verifiedVote, Votes.bestRobotGuess robotVotes ) of
-        ( Just vote, _ ) ->
-            column NoStyle
-                [ spacing 5 ]
-                [ bold <| translate model.language RobinhosOpinion
-                , viewVerifiedVote model vote
-                ]
+        robotPredictions =
+            Votes.predictionsToText robotVotes
 
-        ( _, Just bestGuess ) ->
+        viewRobotVote ( chanceText, category ) =
+            viewVote model "\x1F916" (Locale.translate model.language chanceText) category ""
+
+        renderPredictions items =
             column NoStyle
                 [ spacing 5 ]
-                [ bold <| translate model.language RobinhosOpinion
-                , viewRobotVote bestGuess
-                ]
+                ([ bold <| translate model.language RobinhosOpinion ] ++ items)
+    in
+    case ( verifiedVote, List.head robotPredictions ) of
+        ( Just vote, _ ) ->
+            renderPredictions [ viewVerifiedVote model vote ]
+
+        ( Nothing, Just _ ) ->
+            renderPredictions (List.map viewRobotVote robotPredictions)
 
         _ ->
             empty
-
-
-chanceToText : number -> Model -> String
-chanceToText chance model =
-    let
-        rebalancedChance =
-            (chance - 50) * 2
-    in
-    if rebalancedChance >= 66 then
-        Locale.translate model.language AlmostCertain
-    else if rebalancedChance >= 33 then
-        Locale.translate model.language LooksALotLike
-    else
-        Locale.translate model.language LooksLike
 
 
 nothingWrongExample : Model -> Element Classes variation Msg

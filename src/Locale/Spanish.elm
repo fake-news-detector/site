@@ -30,6 +30,9 @@ translate localeValue =
         FakeNewsDescription ->
             "Noticia falsa, engaña al lector, difunde rumores"
 
+        Biased ->
+            "Sesgado"
+
         ExtremelyBiased ->
             "Extremadamente Sesgado"
 
