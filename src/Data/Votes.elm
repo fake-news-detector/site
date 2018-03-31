@@ -153,17 +153,6 @@ postVoteByContent uuid content category =
         (Json.Decode.succeed ())
 
 
-bestRobotGuess : RobotPredictions -> Maybe ( Category, Float )
-bestRobotGuess robotVotes =
-    [ ( FakeNews, robotVotes.fake_news )
-    , ( ExtremelyBiased, robotVotes.extremely_biased )
-    , ( Clickbait, robotVotes.clickbait )
-    ]
-        |> List.filter (\prediction -> Tuple.second prediction > 0.5)
-        |> List.sortBy Tuple.second
-        |> List.head
-
-
 chanceToText : number -> Words.LocaleKey
 chanceToText chance =
     let

@@ -246,7 +246,7 @@ viewVotes model query votes =
                 column NoStyle [ spacing 5 ] ([ bold <| translate model.language PeoplesOpinion ] ++ List.map viewPeopleVote peopleVotes)
               else
                 empty
-            , if List.length peopleVotes == 0 && Votes.bestRobotGuess votes.robot == Nothing && votes.domain == Nothing then
+            , if List.length peopleVotes == 0 && Votes.predictionsToText votes.robot == [] && votes.domain == Nothing then
                 nothingWrongExample model
               else
                 empty
